@@ -668,8 +668,8 @@ p { margin: 0 0 1em; max-width: 62ch; color: var(--brown-soft); }
   .hero-inner { padding: 0 24px; }
   .hero-copy { max-width: 80%; }
   .hero-copy .script-note { font-size: 1rem; }
-  .hero-copy h1 { font-size: clamp(38px, 9vw, 44px); line-height: 1.1; }
-  .hero-sub { font-size: 0.95rem; margin-bottom: 24px; }
+  .hero-copy h1 { font-size: clamp(38px, 9vw, 44px); line-height: 1.1; margin-bottom: 26px; }
+  .hero-sub { display: none; }
 
   .hero-copy .btn-primary {
     width: 100%;
@@ -679,11 +679,7 @@ p { margin: 0 0 1em; max-width: 62ch; color: var(--brown-soft); }
     justify-content: center;
   }
 
-  .hero-trust {
-    margin-top: 18px;
-    font-size: 0.76rem;
-    line-height: 1.6;
-  }
+  .hero-trust { display: none; }
 
   .hero-scroll { display: none; }
 }
