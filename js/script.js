@@ -1,5 +1,5 @@
 /* ============================================================
-   Lets_mimos — script principal
+   Lets Mimos — script principal
    ============================================================
    Para configurar o site do cliente, edite apenas as duas
    constantes abaixo (WHATSAPP_NUMBER) e o array PRODUCTS.
@@ -206,7 +206,7 @@ function wireWaCtas() {
   document.querySelectorAll(".wa-cta, #headerWaBtn, #footerWaLink").forEach((el) => {
     const msg = el.dataset && el.dataset.waMsg
       ? el.dataset.waMsg
-      : "Olá! Vim pelo site da Lets_mimos e gostaria de mais informações.";
+      : "Olá! Vim pelo site da Lets Mimos e gostaria de mais informações.";
     el.setAttribute("href", waLink(msg));
   });
 }
