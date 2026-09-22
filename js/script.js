@@ -36,13 +36,11 @@ const CATEGORIES = [
 // automaticamente por loadProductsFromSheet() antes de renderizar a página.
 let PRODUCTS = [];
 
-// Link da planilha de produtos, exportando direto a aba "produto" (pelo
-// gid dela), no formato CSV. Assim, mesmo se você criar outras abas na
-// planilha (rascunhos, testes), o site sempre lê a aba certa.
-// Formato: .../spreadsheets/d/ID_DA_PLANILHA/export?format=csv&gid=ID_DA_ABA
-// (o ID da planilha e o gid aparecem na barra de endereço quando você
-// está com a aba certa aberta no navegador).
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/1KwZgzut6sWvjObR1dWAaL2qlGknm9jY9hWnxRNQkLX8/export?format=csv&gid=205037285";
+// Link da planilha de produtos, publicada como CSV (aba "produto").
+// Como publicar: na planilha, com a aba certa selecionada → Arquivo →
+// Compartilhar → Publicar na Web → escolha a aba (não "Documento inteiro")
+// → formato CSV → Publicar. Cole aqui o link gerado.
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTYj8AOCQZ_T5bWrHHGmMMuhiLwJ5qfaZHg4PjIJozQcORvLp4DUO214UkOedkXO-7TiJynIaI_-kyz/pub?gid=205037285&single=true&output=csv";
 
 // Busca e converte os produtos da planilha. Aceita tanto cabeçalhos em
 // português (COD PRODUTO, NOME, CATEGORIA, DESCRIÇÃO, PREÇO, FAVORITO,
