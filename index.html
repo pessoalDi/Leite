@@ -1,743 +1,227 @@
-/* ============================================================
-   Leite mimos — folha de estilos
-   ============================================================ */
-
-:root {
-  --cream:        #FBF3EC;
-  --cream-deep:   #F3E4D7;
-  --white:        #FFFDFB;
-  --rose:         #B4695F;
-  --rose-deep:    #96534A;
-  --rose-soft:    #E9CFC8;
-  --nude:         #D9B79C;
-  --brown:        #4A342A;
-  --brown-soft:   #7A5C4E;
-  --whatsapp:     #25D366;
-
-  --font-display: "Fraunces", serif;
-  --font-body:    "Jost", sans-serif;
-  --font-script:  "Caveat", cursive;
-
-  --radius-lg: 28px;
-  --radius-md: 18px;
-  --radius-sm: 10px;
-
-  --shadow-soft: 0 18px 40px -22px rgba(74, 52, 42, 0.35);
-  --shadow-card: 0 10px 30px -16px rgba(74, 52, 42, 0.28);
-
-  --content-width: 1180px;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
-}
-
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-
-body {
-  margin: 0;
-  background: var(--cream);
-  color: var(--brown);
-  font-family: var(--font-body);
-  font-size: 16px;
-  line-height: 1.6;
-  -webkit-font-smoothing: antialiased;
-}
-
-img, svg { max-width: 100%; display: block; }
-
-a { color: inherit; text-decoration: none; }
-
-h1, h2, h3 {
-  font-family: var(--font-display);
-  color: var(--brown);
-  margin: 0 0 0.5em;
-  font-weight: 500;
-  letter-spacing: -0.01em;
-}
-
-h1 { font-size: clamp(2.3rem, 5vw, 3.6rem); line-height: 1.08; }
-h2 { font-size: clamp(1.7rem, 3.2vw, 2.4rem); line-height: 1.15; }
-h3 { font-size: 1.15rem; }
-
-p { margin: 0 0 1em; max-width: 62ch; color: var(--brown-soft); }
-
-.script-note {
-  font-family: var(--font-script);
-  font-size: 1.4rem;
-  color: var(--rose);
-  margin: 0 0 0.3em;
-  line-height: 1;
-}
-
-.section-inner {
-  max-width: var(--content-width);
-  margin: 0 auto;
-  padding: 0 24px;
-}
-
-.skip-link {
-  position: absolute; left: -999px; top: 0;
-  background: var(--brown); color: var(--cream);
-  padding: 10px 16px; border-radius: 0 0 8px 0; z-index: 999;
-}
-.skip-link:focus { left: 0; }
-
-:focus-visible {
-  outline: 2.5px solid var(--rose-deep);
-  outline-offset: 3px;
-}
-
-/* ---------- buttons ---------- */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  padding: 14px 26px;
-  border-radius: 999px;
-  font-family: var(--font-body);
-  font-weight: 500;
-  font-size: 0.98rem;
-  cursor: pointer;
-  border: 1.5px solid transparent;
-  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
-}
-.btn:hover { transform: translateY(-2px); }
-
-.btn-primary {
-  background: var(--rose);
-  color: var(--white);
-  box-shadow: var(--shadow-soft);
-}
-.btn-primary:hover { background: var(--rose-deep); }
-
-.btn-outline {
-  background: transparent;
-  border-color: var(--rose);
-  color: var(--rose-deep);
-}
-.btn-outline:hover { background: var(--rose-soft); }
-
-.btn-large { padding: 17px 34px; font-size: 1.05rem; }
-
-.btn svg { flex-shrink: 0; }
-
-/* ---------- icon frames (product placeholders) ---------- */
-.icon-frame {
-  display: flex; align-items: center; justify-content: center;
-  background: var(--white);
-  color: var(--rose-deep);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-card);
-  width: 100%; height: 100%;
-  padding: 18%;
-}
-.icon-frame svg { width: 100%; height: 100%; }
-
-/* ============================================================
-   HEADER
-   ============================================================ */
-.site-header {
-  position: sticky; top: 0; z-index: 100;
-  background: rgba(251, 243, 236, 0.86);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(74, 52, 42, 0.08);
-}
-.header-inner {
-  max-width: var(--content-width);
-  margin: 0 auto;
-  padding: 16px 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.brand { display: flex; align-items: center; gap: 12px; }
-.brand-logo {
-  width: 48px; height: 48px;
-  border-radius: 50%;
-  object-fit: cover;
-  box-shadow: var(--shadow-card);
-  flex-shrink: 0;
-}
-.brand-text { display: flex; flex-direction: column; line-height: 1.1; }
-.brand-name {
-  font-family: var(--font-script);
-  font-size: 1.9rem;
-  color: var(--rose-deep);
-}
-.brand-tagline {
-  font-size: 0.72rem;
-  color: var(--brown-soft);
-  letter-spacing: 0.02em;
-}
-
-.main-nav { display: flex; gap: 30px; }
-.main-nav a {
-  font-size: 0.95rem;
-  color: var(--brown);
-  position: relative;
-  padding: 4px 0;
-}
-.main-nav a::after {
-  content: "";
-  position: absolute; left: 0; right: 100%; bottom: -2px;
-  height: 1.5px; background: var(--rose);
-  transition: right 0.25s ease;
-}
-.main-nav a:hover::after { right: 0; }
-
-.header-actions { display: flex; align-items: center; gap: 14px; }
-
-.wa-icon-btn {
-  display: flex; align-items: center; justify-content: center;
-  width: 42px; height: 42px;
-  border-radius: 50%;
-  background: var(--white);
-  color: var(--whatsapp);
-  box-shadow: var(--shadow-card);
-  transition: transform 0.18s ease;
-}
-.wa-icon-btn:hover { transform: scale(1.06); }
-
-.nav-toggle {
-  display: none;
-  flex-direction: column;
-  gap: 5px;
-  width: 34px; height: 34px;
-  border: none; background: none; cursor: pointer;
-  padding: 6px;
-}
-.nav-toggle span {
-  display: block; height: 2px; width: 100%;
-  background: var(--brown);
-  border-radius: 2px;
-  transition: transform 0.25s ease, opacity 0.25s ease;
-}
-.nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-.nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
-.nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-/* ============================================================
-   HERO
-   ============================================================ */
-.hero {
-  position: relative;
-  overflow: hidden;
-  min-height: 640px;
-  display: flex;
-  align-items: center;
-  background: var(--cream);
-}
-
-.hero-photo {
-  position: absolute;
-  inset: 0;
-  background-size: 122%;
-  background-position: 82% center;
-  background-repeat: no-repeat;
-  z-index: 0;
-}
-.hero-photo::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  /* véu claro e forte à esquerda (onde fica o texto), some
-     progressivamente até liberar totalmente os produtos à direita */
-  background: linear-gradient(
-    to right,
-    var(--cream) 0%,
-    var(--cream) 20%,
-    rgba(251, 243, 236, 0.94) 32%,
-    rgba(251, 243, 236, 0.72) 42%,
-    rgba(251, 243, 236, 0.32) 52%,
-    rgba(251, 243, 236, 0) 64%
-  );
-}
-
-.hero-inner {
-  position: relative; z-index: 1;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 100px clamp(20px, 6vw, 64px) 100px clamp(20px, 4vw, 48px);
-  width: 100%;
-}
-
-.hero-copy { max-width: 500px; }
-.hero-copy .script-note {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--rose-deep);
-  font-size: 1.2rem;
-  margin-bottom: 10px;
-}
-.script-note .heart-mark { flex-shrink: 0; opacity: 0.85; }
-.hero-copy h1 { color: var(--brown); }
-.hero-copy .btn-primary {
-  padding: 17px 32px;
-  font-size: 1.02rem;
-}
-
-.hero-scroll {
-  position: absolute;
-  z-index: 1;
-  left: 50%;
-  bottom: 26px;
-  transform: translateX(-50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 40px; height: 40px;
-  border-radius: 50%;
-  color: var(--rose-deep);
-  background: var(--white);
-  box-shadow: var(--shadow-card);
-  animation: bob 2.2s ease-in-out infinite;
-}
-@keyframes bob {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(6px); }
-}
-
-/* ============================================================
-   CATEGORIES
-   ============================================================ */
-.cat-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 14px;
-}
-@media (max-width: 720px) { .cat-row { grid-template-columns: repeat(2, 1fr); } }
-
-.cat-chip {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  padding: 22px 12px;
-  background: var(--white);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-card);
-  cursor: pointer;
-  border: 1.5px solid transparent;
-  transition: border-color 0.2s ease, transform 0.2s ease;
-  font-size: 0.92rem;
-  color: var(--brown);
-}
-.cat-chip:hover { transform: translateY(-3px); }
-.cat-chip.active { border-color: var(--rose); color: var(--rose-deep); }
-.cat-chip .cat-icon {
-  width: 30px; height: 30px;
-  color: var(--rose-deep);
-}
-
-.cat-chip-photo {
-  padding: 0;
-  aspect-ratio: 1/1;
-  background-size: cover;
-  background-position: center;
-  overflow: hidden;
-}
-.cat-chip-photo.active { border-width: 2.5px; }
-
-/* ============================================================
-   PRODUCTS
-   ============================================================ */
-.products { padding: 60px 0; }
-.products-heading { text-align: center; margin-bottom: 30px; }
-.products-heading p { margin: 0 auto; }
-
-.filter-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
-  margin-bottom: 36px;
-}
-.filter-btn {
-  padding: 9px 18px;
-  border-radius: 999px;
-  border: 1.5px solid var(--nude);
-  background: transparent;
-  color: var(--brown-soft);
-  font-family: var(--font-body);
-  font-size: 0.88rem;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-.filter-btn:hover { border-color: var(--rose); color: var(--rose-deep); }
-.filter-btn.active {
-  background: var(--rose);
-  border-color: var(--rose);
-  color: var(--white);
-}
-
-.product-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-  gap: 26px;
-}
-
-.product-card {
-  background: var(--white);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  box-shadow: var(--shadow-card);
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.22s ease, box-shadow 0.22s ease;
-}
-.product-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-soft); }
-
-.product-photo {
-  aspect-ratio: 4/5;
-  background: var(--cream-deep);
-  overflow: hidden;
-}
-.product-photo.icon-frame { padding: 16%; }
-.product-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: inherit;
-}
-
-.product-body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
-.product-cat-tag {
-  align-self: flex-start;
-  font-size: 0.72rem;
-  color: var(--rose-deep);
-  background: var(--rose-soft);
-  padding: 3px 10px;
-  border-radius: 999px;
-  margin-bottom: 4px;
-}
-.product-body h3 { margin-bottom: 2px; }
-.product-desc { font-size: 0.9rem; margin-bottom: 6px; }
-.product-price {
-  font-family: var(--font-display);
-  font-size: 1.3rem;
-  color: var(--brown);
-  margin: 0 0 12px;
-}
-.product-price span { font-size: 0.75rem; color: var(--brown-soft); font-family: var(--font-body); }
-
-.product-btn {
-  margin-top: auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  padding: 11px 16px;
-  border-radius: 999px;
-  background: var(--cream-deep);
-  color: var(--rose-deep);
-  font-size: 0.88rem;
-  font-weight: 500;
-  transition: background 0.2s ease, color 0.2s ease;
-}
-.product-btn:hover { background: var(--rose); color: var(--white); }
-
-/* ============================================================
-   FAVORITES
-   ============================================================ */
-.favorites { padding: 60px 0; background: var(--cream-deep); }
-.favorites h2, .favorites .section-lede { text-align: center; }
-.favorites .section-lede { margin: 0 auto 34px; }
-
-.favorites-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 22px;
-}
-.fav-card {
-  background: var(--white);
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-card);
-  padding: 22px;
-  text-align: center;
-}
-.fav-photo {
-  width: 88px; height: 88px;
-  margin: 0 auto 14px;
-  border-radius: 50%;
-  background: var(--cream-deep);
-  overflow: hidden;
-}
-.fav-photo.icon-frame { padding: 20%; }
-.fav-photo img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-}
-.fav-card h3 { margin-bottom: 4px; font-size: 1.05rem; }
-.fav-card .product-price { font-size: 1.1rem; margin-bottom: 0; }
-
-/* ============================================================
-   CUSTOMIZE / STEPS
-   ============================================================ */
-.customize { position: relative; padding: 80px 0; overflow: hidden; }
-.customize-blob {
-  position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
-  width: 700px; height: 400px;
-  background: var(--rose-soft);
-  opacity: 0.35;
-  border-radius: 50%;
-  filter: blur(6px);
-  z-index: 0;
-}
-.customize-inner { position: relative; z-index: 1; }
-.customize-copy { max-width: 640px; margin: 0 auto 44px; text-align: center; }
-.customize-copy p { margin: 0 auto; }
-
-.steps {
-  list-style: none;
-  margin: 0; padding: 0;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-}
-@media (max-width: 900px) { .steps { grid-template-columns: repeat(2, 1fr); } }
-
-.step {
-  background: var(--white);
-  border-radius: var(--radius-md);
-  padding: 26px 22px;
-  box-shadow: var(--shadow-card);
-}
-.step-number {
-  display: inline-flex;
-  align-items: center; justify-content: center;
-  width: 34px; height: 34px;
-  border-radius: 50%;
-  background: var(--rose);
-  color: var(--white);
-  font-family: var(--font-display);
-  font-size: 0.95rem;
-  margin-bottom: 14px;
-}
-.step h3 { margin-bottom: 6px; font-size: 1.05rem; }
-.step p { font-size: 0.9rem; margin: 0; }
-
-/* ============================================================
-   KITS
-   ============================================================ */
-.kits { padding: 60px 0 80px; }
-.kits-card {
-  background: var(--brown);
-  color: var(--cream);
-  border-radius: var(--radius-lg);
-  padding: 56px;
-  display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 40px;
-  align-items: center;
-}
-.kits-card h2, .kits-card p { color: var(--cream); }
-.kits-card p { opacity: 0.85; }
-.kits-card .btn-outline { border-color: var(--nude); color: var(--cream); }
-.kits-card .btn-outline:hover { background: rgba(255,255,255,0.08); }
-
-.kits-visual { max-width: 200px; margin: 0 auto; aspect-ratio: 1/1; }
-.kits-visual .icon-frame { background: var(--cream); color: var(--rose-deep); }
-
-/* ============================================================
-   ABOUT
-   ============================================================ */
-.about { padding: 80px 0; }
-.about-inner {
-  display: grid;
-  grid-template-columns: 0.7fr 1.3fr;
-  gap: 50px;
-  align-items: center;
-}
-.about-visual { max-width: 220px; aspect-ratio: 1/1; }
-.about-visual .icon-frame { border-radius: 50%; }
-.about-copy p { max-width: 60ch; }
-
-/* ============================================================
-   TESTIMONIALS
-   ============================================================ */
-.testimonials { padding: 60px 0 80px; background: var(--cream-deep); }
-.testimonials h2 { text-align: center; margin-bottom: 34px; }
-
-.testimonial-track {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 22px;
-}
-@media (max-width: 900px) { .testimonial-track { grid-template-columns: 1fr; } }
-
-.testimonial-card {
-  background: var(--white);
-  border-radius: var(--radius-md);
-  padding: 26px;
-  box-shadow: var(--shadow-card);
-}
-.testimonial-stars { color: var(--rose); font-size: 0.95rem; margin-bottom: 10px; letter-spacing: 2px; }
-.testimonial-quote { font-style: italic; margin-bottom: 14px; }
-.testimonial-name { font-weight: 500; color: var(--brown); font-size: 0.92rem; }
-
-/* ============================================================
-   FINAL CTA
-   ============================================================ */
-.final-cta { padding: 90px 0; text-align: center; }
-.final-cta-inner { max-width: 640px; margin: 0 auto; }
-.final-cta h2 { margin-bottom: 30px; }
-
-/* ============================================================
-   FOOTER
-   ============================================================ */
-.site-footer { background: var(--brown); color: var(--cream); padding: 60px 0 0; }
-.footer-inner {
-  display: grid;
-  grid-template-columns: 1.4fr 1fr 1fr 1fr;
-  gap: 32px;
-  padding-bottom: 46px;
-}
-.footer-brand { display: flex; align-items: center; gap: 14px; }
-.footer-logo {
-  width: 56px; height: 56px;
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
-  background: var(--cream);
-}
-.footer-brand .brand-text { display: flex; flex-direction: column; gap: 4px; }
-.footer-brand .brand-name { color: var(--cream); }
-.footer-brand .brand-tagline { color: rgba(251,243,236,0.65); }
-
-.footer-col { display: flex; flex-direction: column; gap: 10px; }
-.footer-col h4 {
-  font-family: var(--font-body);
-  font-size: 0.82rem;
-  text-transform: none;
-  color: var(--nude);
-  margin: 0 0 4px;
-  font-weight: 500;
-}
-.footer-col a, .footer-col p { color: rgba(251,243,236,0.82); font-size: 0.92rem; margin: 0; }
-.footer-col a:hover { color: var(--cream); }
-
-.footer-bottom {
-  border-top: 1px solid rgba(251,243,236,0.15);
-  padding: 18px 24px;
-  text-align: center;
-  font-size: 0.82rem;
-  color: rgba(251,243,236,0.6);
-}
-
-/* ============================================================
-   RESPONSIVE
-   ============================================================ */
-
-/* --- Tablet: reflow de seções que não são o Hero (mantido como já estava) --- */
-@media (max-width: 980px) {
-  .about-inner { grid-template-columns: 1fr; text-align: center; }
-  .about-visual { margin: 0 auto; }
-  .kits-card { grid-template-columns: 1fr; text-align: center; padding: 40px 28px; }
-  .kits-visual { order: -1; }
-  .footer-inner { grid-template-columns: 1fr 1fr; }
-}
-
-/* --- Mobile: header e Hero redesenhados --- */
-@media (max-width: 768px) {
-  /* header mais compacto, com leve sombra no lugar da borda */
-  .header-inner { padding: 12px 16px; min-height: 56px; }
-  .site-header {
-    box-shadow: 0 3px 14px -8px rgba(74, 52, 42, 0.22);
-    border-bottom: none;
-  }
-  .brand-logo { width: 40px; height: 40px; }
-  .brand-tagline { font-size: 0.66rem; }
-
-  /* Hero: a mesma foto já usada no projeto, como fundo real da seção,
-     com overlay horizontal (creme à esquerda, produtos livres à direita) */
-  .hero {
-    min-height: clamp(600px, 92vw, 700px);
-    align-items: center;
-  }
-  .hero-photo {
-    background-size: cover;
-    background-position: 74% 38%;
-  }
-  .hero-photo::after {
-    background: linear-gradient(
-      to right,
-      var(--cream) 0%,
-      var(--cream) 40%,
-      rgba(251, 243, 236, 0.9) 52%,
-      rgba(251, 243, 236, 0.5) 64%,
-      rgba(251, 243, 236, 0.12) 76%,
-      rgba(251, 243, 236, 0) 88%
-    );
-  }
-
-  .hero-inner { padding: 0 24px; }
-  .hero-copy { max-width: 80%; }
-  .hero-copy .script-note { font-size: 1rem; }
-  .hero-copy h1 { font-size: clamp(38px, 9vw, 44px); line-height: 1.1; margin-bottom: 26px; }
-
-  .hero-copy .btn-primary {
-    width: 100%;
-    max-width: 320px;
-    height: 56px;
-    padding: 0 24px;
-    justify-content: center;
-  }
-
-  .hero-scroll { display: none; }
-}
-
-@media (max-width: 380px) {
-  .hero-copy { max-width: 88%; }
-  .hero-copy h1 { font-size: clamp(34px, 10vw, 38px); }
-}
-
-/* transição suave para a seção de produtos, só no mobile */
-@media (max-width: 768px) {
-  .products {
-    position: relative;
-    margin-top: -28px;
-    background: var(--cream);
-    border-radius: 28px 28px 0 0;
-    padding-top: 48px;
-    z-index: 2;
-  }
-  .products::before {
-    content: "";
-    position: absolute;
-    top: 14px; left: 50%;
-    transform: translateX(-50%);
-    width: 44px; height: 4px;
-    border-radius: 999px;
-    background: var(--nude);
-    opacity: 0.6;
-  }
-  .cat-chip { padding: 20px 10px; }
-}
-
-@media (max-width: 720px) {
-  .main-nav {
-    position: fixed;
-    top: 64px; left: 0; right: 0;
-    background: var(--cream);
-    flex-direction: column;
-    padding: 20px 24px 28px;
-    gap: 18px;
-    box-shadow: var(--shadow-card);
-    transform: translateY(-140%);
-    transition: transform 0.28s ease;
-    z-index: 90;
-  }
-  .main-nav.open { transform: translateY(0); }
-  .nav-toggle { display: flex; }
-  .steps { grid-template-columns: 1fr; }
-  .cat-row { grid-template-columns: repeat(2, 1fr); }
-  .footer-inner { grid-template-columns: 1fr; text-align: center; }
-  .footer-col { align-items: center; }
-}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lets_mimos — Personalizados com carinho</title>
+<meta name="description" content="Presentes personalizados feitos com carinho: garrafas, cadernos, canecas, chaveiros, ecobags e kits. Peça o seu pelo WhatsApp.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Jost:wght@300;400;500;600&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+
+<link rel="icon" type="image/png" sizes="32x32" href="imagens/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="imagens/favicon-180.png">
+
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<a class="skip-link" href="#produtos">Ir para os produtos</a>
+
+<!-- ===================== HEADER ===================== -->
+<header class="site-header" id="topo">
+  <div class="header-inner">
+    <div class="brand">
+      <img class="brand-logo" src="imagens/logo.png" alt="Logo Lets_mimos" width="48" height="48">
+      <span class="brand-text">
+        <span class="brand-name">Lets_mimos</span>
+        <span class="brand-tagline">Personalizados com carinho</span>
+      </span>
+    </div>
+
+    <nav class="main-nav" id="mainNav">
+      <a href="#topo">Início</a>
+      <a href="#produtos">Produtos</a>
+      <a href="#sobre">Sobre nós</a>
+      <a href="#contato">Contato</a>
+    </nav>
+
+    <div class="header-actions">
+      <a class="wa-icon-btn" id="headerWaBtn" href="#" target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
+        <svg viewBox="0 0 32 32" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M16.02 3C9.4 3 4 8.36 4 14.96c0 2.2.6 4.27 1.66 6.05L4 29l8.2-2.15a12.9 12.9 0 0 0 3.82.58h.01c6.62 0 12.02-5.36 12.02-11.96C28.05 8.36 22.65 3 16.02 3Zm0 21.86h-.01a10.6 10.6 0 0 1-5.4-1.48l-.39-.23-3.87 1.01 1.03-3.76-.25-.39a9.83 9.83 0 0 1-1.53-5.05c0-5.46 4.46-9.9 9.94-9.9 2.66 0 5.15 1.03 7.03 2.9a9.83 9.83 0 0 1 2.9 6.99c0 5.46-4.46 9.91-9.45 9.91Zm5.45-7.42c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.6-.92-2.2-.24-.58-.49-.5-.67-.5-.17-.01-.37-.01-.57-.01-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.47 0 1.45 1.06 2.86 1.21 3.06.15.2 2.09 3.2 5.08 4.48.71.31 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2-1.41.25-.7.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35Z"/></svg>
+      </a>
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="mainNav">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<!-- ===================== HERO ===================== -->
+<section class="hero" id="hero">
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <p class="script-note">
+        <svg class="heart-mark" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20S3 14.5 3 8.6A4.6 4.6 0 0 1 12 6a4.6 4.6 0 0 1 9 2.6C21 14.5 12 20 12 20Z"/></svg>
+        feito à mão, pensado para você
+      </p>
+      <h1>Transforme momentos em<br>presentes especiais.</h1>
+      <a href="#" class="btn btn-primary wa-cta" data-wa-msg="Olá! Vim pelo site e quero fazer um pedido personalizado. Pode me ajudar?">
+        <svg viewBox="0 0 32 32" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M16.02 3C9.4 3 4 8.36 4 14.96c0 2.2.6 4.27 1.66 6.05L4 29l8.2-2.15a12.9 12.9 0 0 0 3.82.58h.01c6.62 0 12.02-5.36 12.02-11.96C28.05 8.36 22.65 3 16.02 3Zm0 21.86h-.01a10.6 10.6 0 0 1-5.4-1.48l-.39-.23-3.87 1.01 1.03-3.76-.25-.39a9.83 9.83 0 0 1-1.53-5.05c0-5.46 4.46-9.9 9.94-9.9 2.66 0 5.15 1.03 7.03 2.9a9.83 9.83 0 0 1 2.9 6.99c0 5.46-4.46 9.91-9.45 9.91Z"/></svg>
+        Falar no WhatsApp
+      </a>
+    </div>
+  </div>
+
+  <a href="#produtos" class="hero-scroll" aria-label="Ver produtos">
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+  </a>
+</section>
+
+<!-- ===================== PRODUTOS ===================== -->
+<section class="products" id="produtos">
+  <div class="section-inner">
+    <div class="products-heading">
+      <h2>Nossos produtos</h2>
+      <p>Cada peça é preparada especialmente para o seu pedido.</p>
+    </div>
+
+    <div class="filter-row" id="filterRow">
+      <!-- gerado via JS -->
+    </div>
+
+    <div class="product-grid" id="productGrid">
+      <!-- gerado via JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ===================== QUERIDINHOS ===================== -->
+<section class="favorites" id="queridinhos">
+  <div class="section-inner">
+    <h2>Nossos queridinhos</h2>
+    <p class="section-lede">Os preferidos de quem já comprou com a gente.</p>
+    <div class="favorites-grid" id="favoritesGrid">
+      <!-- gerado via JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ===================== PERSONALIZE ===================== -->
+<section class="customize" id="personalize">
+  <div class="customize-blob" aria-hidden="true"></div>
+  <div class="section-inner customize-inner">
+    <div class="customize-copy">
+      <h2>Personalize do seu jeito</h2>
+      <p>Escolha o produto, conte pra gente sua ideia e receba uma peça única — pensada de verdade para quem vai ganhar.</p>
+    </div>
+
+    <ol class="steps">
+      <li class="step">
+        <span class="step-number">1</span>
+        <h3>Escolha o produto</h3>
+        <p>Navegue pelo catálogo e encontre a peça perfeita para o seu momento.</p>
+      </li>
+      <li class="step">
+        <span class="step-number">2</span>
+        <h3>Conte sua ideia</h3>
+        <p>Nome, cor, frase, tema — nos envie os detalhes pelo WhatsApp.</p>
+      </li>
+      <li class="step">
+        <span class="step-number">3</span>
+        <h3>Aprovamos com você</h3>
+        <p>Enviamos uma prévia antes de colocar a mão na massa.</p>
+      </li>
+      <li class="step">
+        <span class="step-number">4</span>
+        <h3>Receba em casa</h3>
+        <p>Produzimos com carinho e enviamos até a sua porta.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<!-- ===================== KITS ===================== -->
+<section class="kits" id="kits">
+  <div class="section-inner">
+    <div class="kits-card">
+      <div class="kits-copy">
+        <p class="script-note">para presentear com ainda mais carinho</p>
+        <h2>Kits e presentes</h2>
+        <p>Combine peças personalizadas em kits prontos para presentear — aniversário, dia das mães, formatura ou só porque sim.</p>
+        <a href="#" class="btn btn-outline wa-cta" data-wa-msg="Olá! Gostaria de montar um kit de presente personalizado. Pode me ajudar a escolher?">Montar meu kit pelo WhatsApp</a>
+      </div>
+      <div class="kits-visual" aria-hidden="true">
+        <span class="icon-frame frame-kit"><svg viewBox="0 0 140 140" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="18" y="46" width="104" height="76" rx="8"/><path d="M18 70h104"/><path d="M58 46v76M82 46v76" opacity="0.5"/><path d="M40 46c0-14 10-24 30-24s30 10 30 24" /><circle cx="70" cy="18" r="6" fill="currentColor" stroke="none"/></svg></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SOBRE ===================== -->
+<section class="about" id="sobre">
+  <div class="section-inner about-inner">
+    <div class="about-visual" aria-hidden="true">
+      <span class="icon-frame frame-heart"><svg viewBox="0 0 140 140" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M70 118S22 90 22 54a26 26 0 0 1 48-14 26 26 0 0 1 48 14c0 36-48 64-48 64Z"/><path d="M52 56c4-6 12-6 16 0" opacity="0.5"/></svg></span>
+    </div>
+    <div class="about-copy">
+      <p class="script-note">quem faz</p>
+      <h2>Uma marca pequena, feita com as mãos</h2>
+      <p>A Lets_mimos nasceu da vontade de transformar presentes simples em lembranças cheias de significado. Cada peça é pensada, escolhida e preparada uma a uma — sem pressa, sem produção em massa. Se você chegou até aqui, já faz parte dessa história.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DEPOIMENTOS ===================== -->
+<section class="testimonials" id="depoimentos">
+  <div class="section-inner">
+    <h2>Quem já ganhou um mimo</h2>
+    <div class="testimonial-track" id="testimonialTrack">
+      <!-- gerado via JS -->
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CTA FINAL ===================== -->
+<section class="final-cta" id="contato">
+  <div class="section-inner final-cta-inner">
+    <p class="script-note">vamos criar seu mimo?</p>
+    <h2>Seu presente personalizado está a uma mensagem de distância</h2>
+    <a href="#" class="btn btn-primary btn-large wa-cta" data-wa-msg="Olá! Quero fazer um pedido personalizado na Lets_mimos.">
+      <svg viewBox="0 0 32 32" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M16.02 3C9.4 3 4 8.36 4 14.96c0 2.2.6 4.27 1.66 6.05L4 29l8.2-2.15a12.9 12.9 0 0 0 3.82.58h.01c6.62 0 12.02-5.36 12.02-11.96C28.05 8.36 22.65 3 16.02 3Zm0 21.86h-.01a10.6 10.6 0 0 1-5.4-1.48l-.39-.23-3.87 1.01 1.03-3.76-.25-.39a9.83 9.83 0 0 1-1.53-5.05c0-5.46 4.46-9.9 9.94-9.9 2.66 0 5.15 1.03 7.03 2.9a9.83 9.83 0 0 1 2.9 6.99c0 5.46-4.46 9.91-9.45 9.91Z"/></svg>
+      Falar no WhatsApp
+    </a>
+  </div>
+</section>
+
+<!-- ===================== FOOTER ===================== -->
+<footer class="site-footer">
+  <div class="section-inner footer-inner">
+    <div class="footer-brand">
+      <img class="footer-logo" src="imagens/logo.png" alt="Logo Lets_mimos" width="56" height="56">
+      <span class="brand-text">
+        <span class="brand-name">Lets_mimos</span>
+        <span class="brand-tagline">Personalizados com carinho</span>
+      </span>
+    </div>
+
+    <div class="footer-col">
+      <h4>Navegue</h4>
+      <a href="#topo">Início</a>
+      <a href="#produtos">Produtos</a>
+      <a href="#sobre">Sobre nós</a>
+      <a href="#contato">Contato</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Fale com a gente</h4>
+      <a href="#" id="footerWaLink" target="_blank" rel="noopener">WhatsApp</a>
+      <a href="https://instagram.com/" target="_blank" rel="noopener">Instagram</a>
+      <a href="mailto:contato@leitemimos.com.br">contato@leitemimos.com.br</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Lets_mimos</h4>
+      <p>Presentes personalizados feitos com carinho.</p>
+      <p>Manaus — AM</p>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© <span id="year"></span> Lets_mimos. Todos os direitos reservados.</p>
+  </div>
+</footer>
+
+<script src="js/script.js"></script>
+</body>
+</html>
