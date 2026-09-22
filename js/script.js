@@ -23,17 +23,18 @@ const ICONS = {
   outros: `<svg viewBox="0 0 140 140" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M70 118S22 90 22 54a26 26 0 0 1 48-14 26 26 0 0 1 48 14c0 36-48 64-48 64Z"/></svg>`
 };
 
-// Categorias exibidas nos atalhos e nos filtros.
+// Categorias exibidas nos atalhos e nos filtros. "photo" é opcional:
+// quando presente, o atalho mostra a foto no lugar do ícone de linha.
 const CATEGORIES = [
   { id: "garrafas",  label: "Garrafas"  },
-  { id: "cadernos",  label: "Cadernos"  },
-  { id: "chaveiros", label: "Chaveiros" },
+  { id: "cadernos",  label: "Cadernos",  photo: "imagens/produtos/categoria-cadernos.jpg" },
+  { id: "chaveiros", label: "Chaveiros", photo: "imagens/produtos/categoria-chaveiros.jpg" },
   { id: "canecas",   label: "Canecas"   },
   { id: "copos",     label: "Copos"     },
   { id: "ecobags",   label: "Ecobags"   },
-  { id: "quadros",   label: "Quadros"   },
+  { id: "quadros",   label: "Quadros",   photo: "imagens/produtos/categoria-quadros.jpg" },
   { id: "kits",      label: "Kits"      },
-  { id: "outros",    label: "Outros"    }
+  { id: "outros",    label: "Outros",    photo: "imagens/produtos/categoria-polaroides.jpg" }
 ];
 
 // Catálogo de produtos. "favorite: true" aparece em "Nossos queridinhos".
@@ -41,7 +42,7 @@ const CATEGORIES = [
 // o card usa o ícone de linha da categoria como espaço reservado.
 const PRODUCTS = [
   { id: "garrafa-termica",  name: "Garrafa Térmica Personalizada", category: "garrafas",  desc: "Inox, nome ou logo personalizados",  price: 69.90,  favorite: true,  photo: "imagens/produtos/garrafa-termica-preta.jpg" },
-  { id: "garrafa-squeeze",  name: "Garrafa Squeeze Personalizada", category: "garrafas",  desc: "650ml, diversas cores",               price: 49.90,  favorite: false },
+  { id: "garrafa-squeeze",  name: "Garrafa Squeeze Personalizada", category: "garrafas",  desc: "Com mosquetão, diversas cores",       price: 49.90,  favorite: false, photo: "imagens/produtos/garrafa-squeeze-mosquetao.jpg" },
   { id: "caderno-capa",     name: "Caderno Personalizado",         category: "cadernos",  desc: "Espiral, capa \"Sua arte aqui\"",       price: 39.90,  favorite: true,  photo: "imagens/produtos/caderno-sua-arte-amarelo.jpg" },
   { id: "caderno-rosa",     name: "Caderno Personalizado Rosa",    category: "cadernos",  desc: "Espiral, capa personalizada",         price: 39.90,  favorite: false, photo: "imagens/produtos/caderno-sua-arte-rosa.jpg" },
   { id: "mini-caderno",     name: "Mini Caderno com Inicial",      category: "cadernos",  desc: "Bolso, nome e inicial personalizados", price: 24.90,  favorite: false, photo: "imagens/produtos/mini-caderno-iniciais.jpg" },
@@ -49,7 +50,7 @@ const PRODUCTS = [
   { id: "chaveiro-acrilico",name: "Chaveiro Personalizado",        category: "chaveiros", desc: "Formato disco de vinil, com frase",   price: 19.90,  favorite: true,  photo: "imagens/produtos/chaveiros-vinil.jpg" },
   { id: "chaveiro-casal",   name: "Chaveiro de Casal",             category: "chaveiros", desc: "Par de chaveiros combinando",        price: 34.90,  favorite: false },
   { id: "caneca-porcelana", name: "Caneca Personalizada",          category: "canecas",   desc: "Porcelana, 325ml",                   price: 34.90,  favorite: true  },
-  { id: "caneca-termica",   name: "Caneca Térmica Personalizada",  category: "canecas",   desc: "Inox, mantém a temperatura",         price: 54.90,  favorite: false },
+  { id: "caneca-termica",   name: "Copo Térmico com Alça",         category: "canecas",   desc: "Inox, com alça e canudo",             price: 64.90,  favorite: false, photo: "imagens/produtos/copo-termico-mockup.jpg" },
   { id: "copo-termico",     name: "Copo Térmico com Alça",         category: "copos",     desc: "Inox, com alça e canudo",             price: 64.90,  favorite: true,  photo: "imagens/produtos/copo-termico-alca.jpg" },
   { id: "copo-long",        name: "Copo Long Drink Personalizado", category: "copos",     desc: "350ml, acrílico resistente",          price: 29.90,  favorite: false },
   { id: "ecobag-basica",    name: "Ecobag Personalizada",          category: "ecobags",   desc: "Algodão cru, estampa exclusiva",     price: 39.90,  favorite: true  },
@@ -91,8 +92,11 @@ function categoryLabel(id) {
 /* ---------------- render: categories row ---------------- */
 function renderCategories() {
   const row = document.getElementById("catRow");
-  row.innerHTML = CATEGORIES.map(
-    (cat) => `
+  row.innerHTML = CATEGORIES.map((cat) =>
+    cat.photo
+      ? `
+    <button class="cat-chip cat-chip-photo" data-cat="${cat.id}" style="background-image:url('${cat.photo}')" aria-label="${cat.label}"></button>`
+      : `
     <button class="cat-chip" data-cat="${cat.id}">
       <span class="cat-icon">${ICONS[cat.id] || ""}</span>
       <span>${cat.label}</span>
