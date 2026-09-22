@@ -1,217 +1,722 @@
 /* ============================================================
-   Lets_mimos — script principal
-   ============================================================
-   Para configurar o site do cliente, edite apenas as duas
-   constantes abaixo (WHATSAPP_NUMBER) e o array PRODUCTS.
+   Leite mimos — folha de estilos
    ============================================================ */
 
-// Número de WhatsApp do vendedor, formato internacional, só dígitos:
-// 55 (Brasil) + DDD + número. Troque pelo número real antes de publicar.
-const WHATSAPP_NUMBER = "5592900000000";
+:root {
+  --cream:        #FBF3EC;
+  --cream-deep:   #F3E4D7;
+  --white:        #FFFDFB;
+  --rose:         #B4695F;
+  --rose-deep:    #96534A;
+  --rose-soft:    #E9CFC8;
+  --nude:         #D9B79C;
+  --brown:        #4A342A;
+  --brown-soft:   #7A5C4E;
+  --whatsapp:     #25D366;
 
-// Ícones usados como "foto" provisória de cada categoria (troque por
-// fotos reais em /images quando o cliente enviar o material).
-const ICONS = {
-  garrafas: `<svg viewBox="0 0 100 130" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M42 8h16v14c6 6 10 12 10 22v66a8 8 0 0 1-8 8H40a8 8 0 0 1-8-8V44c0-10 4-16 10-22V8Z"/><path d="M40 8h20"/><path d="M34 60h32"/></svg>`,
-  cadernos: `<svg viewBox="0 0 100 130" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="16" y="12" width="68" height="96" rx="6"/><path d="M30 12v96" opacity="0.5"/><path d="M46 40c8-6 18-2 18 6s-14 8-14 16 10 10 18 6"/></svg>`,
-  chaveiros: `<svg viewBox="0 0 100 130" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="38" cy="30" r="18"/><circle cx="38" cy="30" r="7"/><path d="M50 42 82 74"/><rect x="70" y="86" width="20" height="26" rx="5" transform="rotate(8 70 86)"/></svg>`,
-  canecas: `<svg viewBox="0 0 100 130" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 40h48v40a18 18 0 0 1-18 18H40a18 18 0 0 1-18-18V40Z"/><path d="M70 48h6a12 12 0 0 1 0 24h-6"/></svg>`,
-  copos: `<svg viewBox="0 0 100 130" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="30" y="10" width="40" height="16" rx="4"/><path d="M34 26h32l6 12v72a10 10 0 0 1-10 10H38a10 10 0 0 1-10-10V38l6-12Z"/></svg>`,
-  ecobags: `<svg viewBox="0 0 100 130" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M26 40h48l6 66a6 6 0 0 1-6 6H26a6 6 0 0 1-6-6l6-66Z"/><path d="M36 40v-8a14 14 0 0 1 28 0v8"/></svg>`,
-  kits: `<svg viewBox="0 0 140 140" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="18" y="46" width="104" height="76" rx="8"/><path d="M18 70h104"/><path d="M40 46c0-14 10-24 30-24s30 10 30 24"/></svg>`,
-  outros: `<svg viewBox="0 0 140 140" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M70 118S22 90 22 54a26 26 0 0 1 48-14 26 26 0 0 1 48 14c0 36-48 64-48 64Z"/></svg>`
-};
+  --font-display: "Fraunces", serif;
+  --font-body:    "Jost", sans-serif;
+  --font-script:  "Caveat", cursive;
 
-// Categorias exibidas nos atalhos e nos filtros.
-const CATEGORIES = [
-  { id: "garrafas",  label: "Garrafas"  },
-  { id: "cadernos",  label: "Cadernos"  },
-  { id: "chaveiros", label: "Chaveiros" },
-  { id: "canecas",   label: "Canecas"   },
-  { id: "copos",     label: "Copos"     },
-  { id: "ecobags",   label: "Ecobags"   },
-  { id: "kits",      label: "Kits"      },
-  { id: "outros",    label: "Outros"    }
-];
+  --radius-lg: 28px;
+  --radius-md: 18px;
+  --radius-sm: 10px;
 
-// Catálogo de produtos. "favorite: true" aparece em "Nossos queridinhos".
-const PRODUCTS = [
-  { id: "garrafa-termica",  name: "Garrafa Térmica Personalizada", category: "garrafas",  desc: "500ml, nome ou frase gravada",     price: 59.90, favorite: true  },
-  { id: "garrafa-squeeze",  name: "Garrafa Squeeze Personalizada", category: "garrafas",  desc: "650ml, diversas cores",             price: 49.90, favorite: false },
-  { id: "caderno-capa",     name: "Caderno Personalizado",         category: "cadernos",  desc: "Capa dura, personalizada",          price: 39.90, favorite: true  },
-  { id: "caderno-pautado",  name: "Bloco de Notas Personalizado",  category: "cadernos",  desc: "80 folhas, pautado",                price: 24.90, favorite: false },
-  { id: "chaveiro-acrilico",name: "Chaveiro Personalizado",        category: "chaveiros", desc: "Acrílico, modelo personalizado",    price: 19.90, favorite: true  },
-  { id: "chaveiro-casal",   name: "Chaveiro de Casal",             category: "chaveiros", desc: "Par de chaveiros combinando",       price: 34.90, favorite: false },
-  { id: "caneca-porcelana", name: "Caneca Personalizada",          category: "canecas",   desc: "Porcelana, 325ml",                  price: 34.90, favorite: true  },
-  { id: "caneca-termica",   name: "Caneca Térmica Personalizada",  category: "canecas",   desc: "Inox, mantém a temperatura",        price: 54.90, favorite: false },
-  { id: "copo-termico",     name: "Copo Térmico Personalizado",    category: "copos",     desc: "600ml, canudo incluso",             price: 44.90, favorite: true  },
-  { id: "copo-long",        name: "Copo Long Drink Personalizado", category: "copos",     desc: "350ml, acrílico resistente",        price: 29.90, favorite: false },
-  { id: "ecobag-basica",    name: "Ecobag Personalizada",          category: "ecobags",   desc: "Algodão cru, estampa exclusiva",    price: 39.90, favorite: true  },
-  { id: "ecobag-bolso",     name: "Ecobag com Bolso Personalizada",category: "ecobags",   desc: "Reforçada, com bolso frontal",      price: 49.90, favorite: false },
-  { id: "kit-maternidade",  name: "Kit Maternidade",               category: "kits",      desc: "Garrafa + caderno + chaveiro",      price: 129.90, favorite: true },
-  { id: "kit-presente",     name: "Kit Presente Especial",         category: "kits",      desc: "Caneca + ecobag + cartão",          price: 99.90,  favorite: false },
-  { id: "porta-copo",       name: "Porta-copo Personalizado",      category: "outros",    desc: "Conjunto com 4 unidades",           price: 29.90,  favorite: false },
-  { id: "quadro-mdf",       name: "Quadro Decorativo Personalizado", category: "outros",  desc: "MDF, tamanho A4",                   price: 44.90,  favorite: false }
-];
+  --shadow-soft: 0 18px 40px -22px rgba(74, 52, 42, 0.35);
+  --shadow-card: 0 10px 30px -16px rgba(74, 52, 42, 0.28);
 
-const TESTIMONIALS = [
-  { name: "Camila R.", text: "A garrafa personalizada chegou ainda mais linda do que eu imaginei. Atendimento super atencioso do início ao fim." },
-  { name: "Juliana M.", text: "Comprei o kit maternidade de presente e foi um sucesso. Capricho em cada detalhe." },
-  { name: "Fernanda A.", text: "Já é a terceira vez que compro. A caneca personalizada ficou perfeita, super recomendo." }
-];
-
-const brl = (value) =>
-  value.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
-
-function waLink(message) {
-  return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  --content-width: 1180px;
 }
 
-function categoryLabel(id) {
-  const found = CATEGORIES.find((c) => c.id === id);
-  return found ? found.label : id;
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; scroll-behavior: auto !important; }
 }
 
-/* ---------------- render: categories row ---------------- */
-function renderCategories() {
-  const row = document.getElementById("catRow");
-  row.innerHTML = CATEGORIES.map(
-    (cat) => `
-    <button class="cat-chip" data-cat="${cat.id}">
-      <span class="cat-icon">${ICONS[cat.id] || ""}</span>
-      <span>${cat.label}</span>
-    </button>`
-  ).join("");
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 
-  row.querySelectorAll(".cat-chip").forEach((chip) => {
-    chip.addEventListener("click", () => {
-      const cat = chip.dataset.cat;
-      document.getElementById("produtos").scrollIntoView({ behavior: "smooth" });
-      setActiveFilter(cat);
-    });
-  });
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--brown);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* ---------------- render: filter buttons ---------------- */
-function renderFilters() {
-  const row = document.getElementById("filterRow");
-  const all = [{ id: "todos", label: "Todos" }, ...CATEGORIES];
-  row.innerHTML = all
-    .map((c) => `<button class="filter-btn" data-cat="${c.id}">${c.label}</button>`)
-    .join("");
+img, svg { max-width: 100%; display: block; }
 
-  row.querySelectorAll(".filter-btn").forEach((btn) => {
-    btn.addEventListener("click", () => setActiveFilter(btn.dataset.cat));
-  });
+a { color: inherit; text-decoration: none; }
 
-  setActiveFilter("todos");
+h1, h2, h3 {
+  font-family: var(--font-display);
+  color: var(--brown);
+  margin: 0 0 0.5em;
+  font-weight: 500;
+  letter-spacing: -0.01em;
 }
 
-function setActiveFilter(cat) {
-  document.querySelectorAll(".filter-btn").forEach((btn) => {
-    btn.classList.toggle("active", btn.dataset.cat === cat);
-  });
-  document.querySelectorAll(".cat-chip").forEach((chip) => {
-    chip.classList.toggle("active", chip.dataset.cat === cat);
-  });
-  renderProducts(cat);
+h1 { font-size: clamp(2.3rem, 5vw, 3.6rem); line-height: 1.08; }
+h2 { font-size: clamp(1.7rem, 3.2vw, 2.4rem); line-height: 1.15; }
+h3 { font-size: 1.15rem; }
+
+p { margin: 0 0 1em; max-width: 62ch; color: var(--brown-soft); }
+
+.script-note {
+  font-family: var(--font-script);
+  font-size: 1.4rem;
+  color: var(--rose);
+  margin: 0 0 0.3em;
+  line-height: 1;
 }
 
-/* ---------------- render: product grid ---------------- */
-function renderProducts(filter) {
-  const grid = document.getElementById("productGrid");
-  const list = filter && filter !== "todos"
-    ? PRODUCTS.filter((p) => p.category === filter)
-    : PRODUCTS;
-
-  grid.innerHTML = list
-    .map((p) => {
-      const message = `Olá! Gostaria de comprar ${withArticle(p.name)} no valor de ${brl(p.price)}. Gostaria de saber mais detalhes.`;
-      return `
-      <article class="product-card">
-        <div class="product-photo icon-frame">${ICONS[p.category] || ""}</div>
-        <div class="product-body">
-          <span class="product-cat-tag">${categoryLabel(p.category)}</span>
-          <h3>${p.name}</h3>
-          <p class="product-desc">${p.desc}</p>
-          <p class="product-price">${brl(p.price)}</p>
-          <a class="product-btn" href="${waLink(message)}" target="_blank" rel="noopener">
-            Personalizar pelo WhatsApp
-          </a>
-        </div>
-      </article>`;
-    })
-    .join("");
+.section-inner {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 0 24px;
 }
 
-// Pequeno auxiliar para deixar a mensagem mais natural em português.
-function withArticle(name) {
-  return `a ${name}`;
+.skip-link {
+  position: absolute; left: -999px; top: 0;
+  background: var(--brown); color: var(--cream);
+  padding: 10px 16px; border-radius: 0 0 8px 0; z-index: 999;
+}
+.skip-link:focus { left: 0; }
+
+:focus-visible {
+  outline: 2.5px solid var(--rose-deep);
+  outline-offset: 3px;
 }
 
-/* ---------------- render: favorites ---------------- */
-function renderFavorites() {
-  const grid = document.getElementById("favoritesGrid");
-  const favs = PRODUCTS.filter((p) => p.favorite);
-  grid.innerHTML = favs
-    .map((p) => {
-      const message = `Olá! Gostaria de comprar ${withArticle(p.name)} no valor de ${brl(p.price)}. Gostaria de saber mais detalhes.`;
-      return `
-      <a class="fav-card" href="${waLink(message)}" target="_blank" rel="noopener">
-        <div class="fav-photo icon-frame">${ICONS[p.category] || ""}</div>
-        <h3>${p.name}</h3>
-        <p class="product-price">${brl(p.price)}</p>
-      </a>`;
-    })
-    .join("");
+/* ---------- buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 26px;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 0.98rem;
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+}
+.btn:hover { transform: translateY(-2px); }
+
+.btn-primary {
+  background: var(--rose);
+  color: var(--white);
+  box-shadow: var(--shadow-soft);
+}
+.btn-primary:hover { background: var(--rose-deep); }
+
+.btn-outline {
+  background: transparent;
+  border-color: var(--rose);
+  color: var(--rose-deep);
+}
+.btn-outline:hover { background: var(--rose-soft); }
+
+.btn-large { padding: 17px 34px; font-size: 1.05rem; }
+
+.btn svg { flex-shrink: 0; }
+
+/* ---------- icon frames (product placeholders) ---------- */
+.icon-frame {
+  display: flex; align-items: center; justify-content: center;
+  background: var(--white);
+  color: var(--rose-deep);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  width: 100%; height: 100%;
+  padding: 18%;
+}
+.icon-frame svg { width: 100%; height: 100%; }
+
+/* ============================================================
+   HEADER
+   ============================================================ */
+.site-header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(251, 243, 236, 0.86);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(74, 52, 42, 0.08);
+}
+.header-inner {
+  max-width: var(--content-width);
+  margin: 0 auto;
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
 }
 
-/* ---------------- render: testimonials ---------------- */
-function renderTestimonials() {
-  const track = document.getElementById("testimonialTrack");
-  track.innerHTML = TESTIMONIALS.map(
-    (t) => `
-    <div class="testimonial-card">
-      <div class="testimonial-stars">★★★★★</div>
-      <p class="testimonial-quote">"${t.text}"</p>
-      <p class="testimonial-name">${t.name}</p>
-    </div>`
-  ).join("");
+.brand { display: flex; align-items: center; gap: 12px; }
+.brand-logo {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: var(--shadow-card);
+  flex-shrink: 0;
+}
+.brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+.brand-name {
+  font-family: var(--font-script);
+  font-size: 1.9rem;
+  color: var(--rose-deep);
+}
+.brand-tagline {
+  font-size: 0.72rem;
+  color: var(--brown-soft);
+  letter-spacing: 0.02em;
 }
 
-/* ---------------- wire up: generic WhatsApp CTAs ---------------- */
-function wireWaCtas() {
-  document.querySelectorAll(".wa-cta, #headerWaBtn, #footerWaLink").forEach((el) => {
-    const msg = el.dataset && el.dataset.waMsg
-      ? el.dataset.waMsg
-      : "Olá! Vim pelo site da Lets_mimos e gostaria de mais informações.";
-    el.setAttribute("href", waLink(msg));
-  });
+.main-nav { display: flex; gap: 30px; }
+.main-nav a {
+  font-size: 0.95rem;
+  color: var(--brown);
+  position: relative;
+  padding: 4px 0;
+}
+.main-nav a::after {
+  content: "";
+  position: absolute; left: 0; right: 100%; bottom: -2px;
+  height: 1.5px; background: var(--rose);
+  transition: right 0.25s ease;
+}
+.main-nav a:hover::after { right: 0; }
+
+.header-actions { display: flex; align-items: center; gap: 14px; }
+
+.wa-icon-btn {
+  display: flex; align-items: center; justify-content: center;
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: var(--white);
+  color: var(--whatsapp);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.18s ease;
+}
+.wa-icon-btn:hover { transform: scale(1.06); }
+
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  width: 34px; height: 34px;
+  border: none; background: none; cursor: pointer;
+  padding: 6px;
+}
+.nav-toggle span {
+  display: block; height: 2px; width: 100%;
+  background: var(--brown);
+  border-radius: 2px;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+.nav-toggle[aria-expanded="true"] span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.nav-toggle[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+.nav-toggle[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  position: relative;
+  overflow: hidden;
+  min-height: 640px;
+  display: flex;
+  align-items: center;
 }
 
-/* ---------------- mobile nav toggle ---------------- */
-function wireNavToggle() {
-  const toggle = document.getElementById("navToggle");
-  const nav = document.getElementById("mainNav");
-  toggle.addEventListener("click", () => {
-    const isOpen = nav.classList.toggle("open");
-    toggle.setAttribute("aria-expanded", isOpen ? "true" : "false");
-  });
-  nav.querySelectorAll("a").forEach((link) =>
-    link.addEventListener("click", () => {
-      nav.classList.remove("open");
-      toggle.setAttribute("aria-expanded", "false");
-    })
+.hero-photo {
+  position: absolute;
+  inset: 0;
+  background-size: 122%;
+  background-position: 82% center;
+  background-repeat: no-repeat;
+  z-index: 0;
+}
+.hero-photo::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* véu claro e forte à esquerda (onde fica o texto), some
+     progressivamente até liberar totalmente os produtos à direita */
+  background: linear-gradient(
+    to right,
+    var(--cream) 0%,
+    var(--cream) 20%,
+    rgba(251, 243, 236, 0.94) 32%,
+    rgba(251, 243, 236, 0.72) 42%,
+    rgba(251, 243, 236, 0.32) 52%,
+    rgba(251, 243, 236, 0) 64%
   );
 }
 
-/* ---------------- init ---------------- */
-document.addEventListener("DOMContentLoaded", () => {
-  renderCategories();
-  renderFilters();
-  renderFavorites();
-  renderTestimonials();
-  wireWaCtas();
-  wireNavToggle();
-  document.getElementById("year").textContent = new Date().getFullYear();
-});
+.hero-inner {
+  position: relative; z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 100px clamp(20px, 6vw, 64px) 100px clamp(20px, 4vw, 48px);
+  width: 100%;
+}
+
+.hero-copy { max-width: 500px; }
+.hero-copy .script-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--rose-deep);
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+.script-note .heart-mark { flex-shrink: 0; opacity: 0.85; }
+.hero-copy h1 { color: var(--brown); }
+.hero-copy .btn-primary {
+  padding: 17px 32px;
+  font-size: 1.02rem;
+}
+
+.hero-scroll {
+  position: absolute;
+  z-index: 1;
+  left: 50%;
+  bottom: 26px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  color: var(--rose-deep);
+  background: var(--white);
+  box-shadow: var(--shadow-card);
+  animation: bob 2.2s ease-in-out infinite;
+}
+@keyframes bob {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(6px); }
+}
+
+/* ============================================================
+   CATEGORIES
+   ============================================================ */
+.categories { padding: 40px 0 20px; }
+.categories h2 { text-align: center; margin-bottom: 28px; }
+
+.cat-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+@media (max-width: 720px) { .cat-row { grid-template-columns: repeat(2, 1fr); } }
+
+.cat-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 22px 12px;
+  background: var(--white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: border-color 0.2s ease, transform 0.2s ease;
+  font-size: 0.92rem;
+  color: var(--brown);
+}
+.cat-chip:hover { transform: translateY(-3px); }
+.cat-chip.active { border-color: var(--rose); color: var(--rose-deep); }
+.cat-chip .cat-icon {
+  width: 30px; height: 30px;
+  color: var(--rose-deep);
+}
+
+/* ============================================================
+   PRODUCTS
+   ============================================================ */
+.products { padding: 60px 0; }
+.products-heading { text-align: center; margin-bottom: 30px; }
+.products-heading p { margin: 0 auto; }
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 36px;
+}
+.filter-btn {
+  padding: 9px 18px;
+  border-radius: 999px;
+  border: 1.5px solid var(--nude);
+  background: transparent;
+  color: var(--brown-soft);
+  font-family: var(--font-body);
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.filter-btn:hover { border-color: var(--rose); color: var(--rose-deep); }
+.filter-btn.active {
+  background: var(--rose);
+  border-color: var(--rose);
+  color: var(--white);
+}
+
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 26px;
+}
+
+.product-card {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.22s ease, box-shadow 0.22s ease;
+}
+.product-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-soft); }
+
+.product-photo {
+  aspect-ratio: 4/5;
+  background: var(--cream-deep);
+  padding: 16%;
+}
+
+.product-body { padding: 18px 20px 22px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+.product-cat-tag {
+  align-self: flex-start;
+  font-size: 0.72rem;
+  color: var(--rose-deep);
+  background: var(--rose-soft);
+  padding: 3px 10px;
+  border-radius: 999px;
+  margin-bottom: 4px;
+}
+.product-body h3 { margin-bottom: 2px; }
+.product-desc { font-size: 0.9rem; margin-bottom: 6px; }
+.product-price {
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--brown);
+  margin: 0 0 12px;
+}
+.product-price span { font-size: 0.75rem; color: var(--brown-soft); font-family: var(--font-body); }
+
+.product-btn {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 16px;
+  border-radius: 999px;
+  background: var(--cream-deep);
+  color: var(--rose-deep);
+  font-size: 0.88rem;
+  font-weight: 500;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.product-btn:hover { background: var(--rose); color: var(--white); }
+
+/* ============================================================
+   FAVORITES
+   ============================================================ */
+.favorites { padding: 60px 0; background: var(--cream-deep); }
+.favorites h2, .favorites .section-lede { text-align: center; }
+.favorites .section-lede { margin: 0 auto 34px; }
+
+.favorites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 22px;
+}
+.fav-card {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  padding: 22px;
+  text-align: center;
+}
+.fav-photo {
+  width: 88px; height: 88px;
+  margin: 0 auto 14px;
+  border-radius: 50%;
+  background: var(--cream-deep);
+  padding: 20%;
+}
+.fav-card h3 { margin-bottom: 4px; font-size: 1.05rem; }
+.fav-card .product-price { font-size: 1.1rem; margin-bottom: 0; }
+
+/* ============================================================
+   CUSTOMIZE / STEPS
+   ============================================================ */
+.customize { position: relative; padding: 80px 0; overflow: hidden; }
+.customize-blob {
+  position: absolute; top: -100px; left: 50%; transform: translateX(-50%);
+  width: 700px; height: 400px;
+  background: var(--rose-soft);
+  opacity: 0.35;
+  border-radius: 50%;
+  filter: blur(6px);
+  z-index: 0;
+}
+.customize-inner { position: relative; z-index: 1; }
+.customize-copy { max-width: 640px; margin: 0 auto 44px; text-align: center; }
+.customize-copy p { margin: 0 auto; }
+
+.steps {
+  list-style: none;
+  margin: 0; padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+@media (max-width: 900px) { .steps { grid-template-columns: repeat(2, 1fr); } }
+
+.step {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 26px 22px;
+  box-shadow: var(--shadow-card);
+}
+.step-number {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  background: var(--rose);
+  color: var(--white);
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  margin-bottom: 14px;
+}
+.step h3 { margin-bottom: 6px; font-size: 1.05rem; }
+.step p { font-size: 0.9rem; margin: 0; }
+
+/* ============================================================
+   KITS
+   ============================================================ */
+.kits { padding: 60px 0 80px; }
+.kits-card {
+  background: var(--brown);
+  color: var(--cream);
+  border-radius: var(--radius-lg);
+  padding: 56px;
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 40px;
+  align-items: center;
+}
+.kits-card h2, .kits-card p { color: var(--cream); }
+.kits-card p { opacity: 0.85; }
+.kits-card .btn-outline { border-color: var(--nude); color: var(--cream); }
+.kits-card .btn-outline:hover { background: rgba(255,255,255,0.08); }
+
+.kits-visual { max-width: 200px; margin: 0 auto; aspect-ratio: 1/1; }
+.kits-visual .icon-frame { background: var(--cream); color: var(--rose-deep); }
+
+/* ============================================================
+   ABOUT
+   ============================================================ */
+.about { padding: 80px 0; }
+.about-inner {
+  display: grid;
+  grid-template-columns: 0.7fr 1.3fr;
+  gap: 50px;
+  align-items: center;
+}
+.about-visual { max-width: 220px; aspect-ratio: 1/1; }
+.about-visual .icon-frame { border-radius: 50%; }
+.about-copy p { max-width: 60ch; }
+
+/* ============================================================
+   TESTIMONIALS
+   ============================================================ */
+.testimonials { padding: 60px 0 80px; background: var(--cream-deep); }
+.testimonials h2 { text-align: center; margin-bottom: 34px; }
+
+.testimonial-track {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 22px;
+}
+@media (max-width: 900px) { .testimonial-track { grid-template-columns: 1fr; } }
+
+.testimonial-card {
+  background: var(--white);
+  border-radius: var(--radius-md);
+  padding: 26px;
+  box-shadow: var(--shadow-card);
+}
+.testimonial-stars { color: var(--rose); font-size: 0.95rem; margin-bottom: 10px; letter-spacing: 2px; }
+.testimonial-quote { font-style: italic; margin-bottom: 14px; }
+.testimonial-name { font-weight: 500; color: var(--brown); font-size: 0.92rem; }
+
+/* ============================================================
+   FINAL CTA
+   ============================================================ */
+.final-cta { padding: 90px 0; text-align: center; }
+.final-cta-inner { max-width: 640px; margin: 0 auto; }
+.final-cta h2 { margin-bottom: 30px; }
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+.site-footer { background: var(--brown); color: var(--cream); padding: 60px 0 0; }
+.footer-inner {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1fr;
+  gap: 32px;
+  padding-bottom: 46px;
+}
+.footer-brand { display: flex; align-items: center; gap: 14px; }
+.footer-logo {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: var(--cream);
+}
+.footer-brand .brand-text { display: flex; flex-direction: column; gap: 4px; }
+.footer-brand .brand-name { color: var(--cream); }
+.footer-brand .brand-tagline { color: rgba(251,243,236,0.65); }
+
+.footer-col { display: flex; flex-direction: column; gap: 10px; }
+.footer-col h4 {
+  font-family: var(--font-body);
+  font-size: 0.82rem;
+  text-transform: none;
+  color: var(--nude);
+  margin: 0 0 4px;
+  font-weight: 500;
+}
+.footer-col a, .footer-col p { color: rgba(251,243,236,0.82); font-size: 0.92rem; margin: 0; }
+.footer-col a:hover { color: var(--cream); }
+
+.footer-bottom {
+  border-top: 1px solid rgba(251,243,236,0.15);
+  padding: 18px 24px;
+  text-align: center;
+  font-size: 0.82rem;
+  color: rgba(251,243,236,0.6);
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+
+/* --- Tablet: reflow de seções que não são o Hero (mantido como já estava) --- */
+@media (max-width: 980px) {
+  .about-inner { grid-template-columns: 1fr; text-align: center; }
+  .about-visual { margin: 0 auto; }
+  .kits-card { grid-template-columns: 1fr; text-align: center; padding: 40px 28px; }
+  .kits-visual { order: -1; }
+  .footer-inner { grid-template-columns: 1fr 1fr; }
+}
+
+/* --- Mobile: header e Hero redesenhados --- */
+@media (max-width: 768px) {
+  /* header mais compacto, com leve sombra no lugar da borda */
+  .header-inner { padding: 12px 16px; min-height: 56px; }
+  .site-header {
+    box-shadow: 0 3px 14px -8px rgba(74, 52, 42, 0.22);
+    border-bottom: none;
+  }
+  .brand-logo { width: 40px; height: 40px; }
+  .brand-tagline { font-size: 0.66rem; }
+
+  /* Hero: a mesma foto já usada no projeto, como fundo real da seção,
+     com overlay horizontal (creme à esquerda, produtos livres à direita) */
+  .hero {
+    min-height: clamp(600px, 92vw, 700px);
+    align-items: center;
+  }
+  .hero-photo {
+    background-size: cover;
+    background-position: 74% 38%;
+  }
+  .hero-photo::after {
+    background: linear-gradient(
+      to right,
+      var(--cream) 0%,
+      var(--cream) 40%,
+      rgba(251, 243, 236, 0.9) 52%,
+      rgba(251, 243, 236, 0.5) 64%,
+      rgba(251, 243, 236, 0.12) 76%,
+      rgba(251, 243, 236, 0) 88%
+    );
+  }
+
+  .hero-inner { padding: 0 24px; }
+  .hero-copy { max-width: 80%; }
+  .hero-copy .script-note { font-size: 1rem; }
+  .hero-copy h1 { font-size: clamp(38px, 9vw, 44px); line-height: 1.1; margin-bottom: 26px; }
+
+  .hero-copy .btn-primary {
+    width: 100%;
+    max-width: 320px;
+    height: 56px;
+    padding: 0 24px;
+    justify-content: center;
+  }
+
+  .hero-scroll { display: none; }
+}
+
+@media (max-width: 380px) {
+  .hero-copy { max-width: 88%; }
+  .hero-copy h1 { font-size: clamp(34px, 10vw, 38px); }
+}
+
+/* transição suave para a seção de categorias, só no mobile */
+@media (max-width: 768px) {
+  .categories {
+    position: relative;
+    margin-top: -28px;
+    background: var(--cream);
+    border-radius: 28px 28px 0 0;
+    padding-top: 48px;
+    z-index: 2;
+  }
+  .categories::before {
+    content: "";
+    position: absolute;
+    top: 14px; left: 50%;
+    transform: translateX(-50%);
+    width: 44px; height: 4px;
+    border-radius: 999px;
+    background: var(--nude);
+    opacity: 0.6;
+  }
+  .cat-chip { padding: 20px 10px; }
+}
+
+@media (max-width: 720px) {
+  .main-nav {
+    position: fixed;
+    top: 64px; left: 0; right: 0;
+    background: var(--cream);
+    flex-direction: column;
+    padding: 20px 24px 28px;
+    gap: 18px;
+    box-shadow: var(--shadow-card);
+    transform: translateY(-140%);
+    transition: transform 0.28s ease;
+    z-index: 90;
+  }
+  .main-nav.open { transform: translateY(0); }
+  .nav-toggle { display: flex; }
+  .steps { grid-template-columns: 1fr; }
+  .cat-row { grid-template-columns: repeat(2, 1fr); }
+  .footer-inner { grid-template-columns: 1fr; text-align: center; }
+  .footer-col { align-items: center; }
+}
