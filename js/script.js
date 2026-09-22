@@ -15,20 +15,20 @@ const ICONS = {
   garrafas: `<svg viewBox="0 0 100 130" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M42 8h16v14c6 6 10 12 10 22v66a8 8 0 0 1-8 8H40a8 8 0 0 1-8-8V44c0-10 4-16 10-22V8Z"/><path d="M40 8h20"/><path d="M34 60h32"/></svg>`,
   cadernos: `<svg viewBox="0 0 100 130" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="16" y="12" width="68" height="96" rx="6"/><path d="M30 12v96" opacity="0.5"/><path d="M46 40c8-6 18-2 18 6s-14 8-14 16 10 10 18 6"/></svg>`,
   chaveiros: `<svg viewBox="0 0 100 130" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="38" cy="30" r="18"/><circle cx="38" cy="30" r="7"/><path d="M50 42 82 74"/><rect x="70" y="86" width="20" height="26" rx="5" transform="rotate(8 70 86)"/></svg>`,
-  kits: `<svg viewBox="0 0 140 140" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="18" y="46" width="104" height="76" rx="8"/><path d="M18 70h104"/><path d="M40 46c0-14 10-24 30-24s30 10 30 24"/></svg>`,
   quadros: `<svg viewBox="0 0 100 130" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="14" y="14" width="72" height="102" rx="6"/><circle cx="38" cy="46" r="8"/><path d="M22 96l20-24 16 16 12-14 8 22"/></svg>`,
+  polaroides: `<svg viewBox="0 0 100 130" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="14" y="10" width="72" height="88" rx="4"/><rect x="22" y="18" width="56" height="52" rx="2"/></svg>`,
   outros: `<svg viewBox="0 0 140 140" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M70 118S22 90 22 54a26 26 0 0 1 48-14 26 26 0 0 1 48 14c0 36-48 64-48 64Z"/></svg>`
 };
 
 // Categorias exibidas nos atalhos e nos filtros. "photo" é opcional:
 // quando presente, o atalho mostra a foto no lugar do ícone de linha.
 const CATEGORIES = [
-  { id: "garrafas",  label: "Garrafas"  },
-  { id: "cadernos",  label: "Cadernos",  photo: "imagens/produtos/categoria-cadernos.jpg" },
-  { id: "chaveiros", label: "Chaveiros", photo: "imagens/produtos/categoria-chaveiros.jpg" },
-  { id: "quadros",   label: "Quadros",   photo: "imagens/produtos/categoria-quadros.jpg" },
-  { id: "kits",      label: "Kits"      },
-  { id: "outros",    label: "Outros",    photo: "imagens/produtos/categoria-polaroides.jpg" }
+  { id: "garrafas",   label: "Garrafas",   photo: "imagens/produtos/categoria-garrafas.jpg" },
+  { id: "cadernos",   label: "Cadernos",   photo: "imagens/produtos/categoria-cadernos.jpg" },
+  { id: "chaveiros",  label: "Chaveiros",  photo: "imagens/produtos/categoria-chaveiros.jpg" },
+  { id: "quadros",    label: "Quadros",    photo: "imagens/produtos/categoria-quadros.jpg" },
+  { id: "polaroides", label: "Polaroides", photo: "imagens/produtos/categoria-polaroides.jpg" },
+  { id: "outros",     label: "Outros"      }
 ];
 
 // Catálogo de produtos. "favorite: true" aparece em "Nossos queridinhos".
@@ -49,10 +49,10 @@ const PRODUCTS = [
   { id: "quadro-casinha",      name: "Quadro Casinha da Família",       category: "quadros",   desc: "MDF, frase personalizada",               price: 39.90, favorite: false, photo: "imagens/produtos/quadro-casinha-familia.jpg" },
   { id: "trofeu-professor",    name: "Troféu Melhor Professor",         category: "quadros",   desc: "MDF, gravação personalizada",            price: 44.90, favorite: false, photo: "imagens/produtos/trofeu-professor.jpg" },
   { id: "quadro-redondo",      name: "Quadro Redondo de Formatura",     category: "quadros",   desc: "MDF, com nome da turma",                 price: 49.90, favorite: false, photo: "imagens/produtos/quadro-redondo-formatura.jpg" },
-  { id: "kit-formatura",       name: "Kit Formatura",                   category: "kits",      desc: "Porta-retrato + chaveiros com nome",     price: 89.90, favorite: false, photo: "imagens/produtos/kit-quadro-chaveiro-formatura.jpg" },
+  { id: "kit-formatura",       name: "Kit Formatura",                   category: "quadros",   desc: "Porta-retrato + chaveiros com nome",     price: 89.90, favorite: false, photo: "imagens/produtos/kit-quadro-chaveiro-formatura.jpg" },
   { id: "medalhas",            name: "Medalha de Formatura",            category: "outros",    desc: "Madeira, com nome e fita colorida",      price: 24.90, favorite: false, photo: "imagens/produtos/medalhas-formatura.jpg" },
   { id: "album-memorias",      name: "Álbum de Fotos Personalizado",    category: "outros",    desc: "Espiral, capa \"Memórias\"",              price: 49.90, favorite: true,  photo: "imagens/produtos/album-memorias-vermelho.jpg" },
-  { id: "cartoes-polaroide",   name: "Cartões Polaroide Personalizados", category: "outros",   desc: "Kit com fotos estilo polaroid",          price: 29.90, favorite: true,  photo: "imagens/produtos/cartoes-polaroide.jpg" }
+  { id: "cartoes-polaroide",   name: "Cartões Polaroide Personalizados", category: "polaroides", desc: "Kit com fotos estilo polaroid",         price: 29.90, favorite: true,  photo: "imagens/produtos/cartoes-polaroide.jpg" }
 ];
 
 const TESTIMONIALS = [
