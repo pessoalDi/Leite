@@ -1,5 +1,5 @@
 /* ============================================================
-   Leite mimos — folha de estilos
+   Lets Mimos — folha de estilos
    ============================================================ */
 
 :root {
@@ -154,12 +154,10 @@ p { margin: 0 0 1em; max-width: 62ch; color: var(--brown-soft); }
   gap: 20px;
 }
 
-.brand { display: flex; align-items: center; gap: 12px; }
+.brand { display: flex; align-items: center; flex-shrink: 0; }
 .brand-logo {
-  width: 48px; height: 48px;
-  border-radius: 50%;
-  object-fit: cover;
-  box-shadow: var(--shadow-card);
+  height: 54px;
+  width: auto;
   flex-shrink: 0;
 }
 .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
@@ -599,17 +597,12 @@ p { margin: 0 0 1em; max-width: 62ch; color: var(--brown-soft); }
   gap: 32px;
   padding-bottom: 46px;
 }
-.footer-brand { display: flex; align-items: center; gap: 14px; }
+.footer-brand { display: flex; flex-direction: column; align-items: flex-start; gap: 10px; }
 .footer-logo {
-  width: 56px; height: 56px;
-  border-radius: 50%;
-  object-fit: cover;
-  flex-shrink: 0;
-  background: var(--cream);
+  height: 72px;
+  width: auto;
 }
-.footer-brand .brand-text { display: flex; flex-direction: column; gap: 4px; }
-.footer-brand .brand-name { color: var(--cream); }
-.footer-brand .brand-tagline { color: rgba(251,243,236,0.65); }
+.footer-brand .brand-tagline { color: rgba(251,243,236,0.65); font-size: 0.85rem; }
 
 .footer-col { display: flex; flex-direction: column; gap: 10px; }
 .footer-col h4 {
@@ -652,7 +645,7 @@ p { margin: 0 0 1em; max-width: 62ch; color: var(--brown-soft); }
     box-shadow: 0 3px 14px -8px rgba(74, 52, 42, 0.22);
     border-bottom: none;
   }
-  .brand-logo { width: 40px; height: 40px; }
+  .brand-logo { height: 44px; }
   .brand-tagline { font-size: 0.66rem; }
 
   /* Hero: a mesma foto já usada no projeto, como fundo real da seção,
@@ -740,4 +733,5 @@ p { margin: 0 0 1em; max-width: 62ch; color: var(--brown-soft); }
   .cat-row { grid-template-columns: repeat(2, 1fr); }
   .footer-inner { grid-template-columns: 1fr; text-align: center; }
   .footer-col { align-items: center; }
+  .footer-brand { align-items: center; }
 }
