@@ -31,29 +31,61 @@ const CATEGORIES = [
   { id: "outros",     label: "Outros"      }
 ];
 
-// Catálogo de produtos. "favorite: true" aparece em "Nossos queridinhos".
-// Só produtos com foto real (photo) — sem itens de espaço reservado.
-const PRODUCTS = [
-  { id: "garrafa-termica",     name: "Garrafa Térmica Personalizada",   category: "garrafas",  desc: "Inox, nome ou logo personalizados",     price: 69.90, favorite: true,  photo: "imagens/produtos/garrafa-termica-preta.jpg" },
-  { id: "garrafa-squeeze",     name: "Garrafa Squeeze Personalizada",   category: "garrafas",  desc: "Com mosquetão, diversas cores",          price: 49.90, favorite: false, photo: "imagens/produtos/garrafa-squeeze-mosquetao.jpg" },
-  { id: "copo-termico",        name: "Copo Térmico com Alça",           category: "garrafas",  desc: "Inox, com alça e canudo",                price: 64.90, favorite: true,  photo: "imagens/produtos/copo-termico-alca.jpg" },
-  { id: "copo-termico-grande", name: "Copo Térmico com Alça — Grande",  category: "garrafas",  desc: "Modelo XL, com alça e canudo",           price: 74.90, favorite: false, photo: "imagens/produtos/copo-termico-mockup.jpg" },
-  { id: "caderno-capa",        name: "Caderno Personalizado",           category: "cadernos",  desc: "Espiral, capa \"Sua arte aqui\"",         price: 39.90, favorite: true,  photo: "imagens/produtos/caderno-sua-arte-amarelo.jpg" },
-  { id: "caderno-rosa",        name: "Caderno Personalizado Rosa",      category: "cadernos",  desc: "Espiral, capa personalizada",            price: 39.90, favorite: false, photo: "imagens/produtos/caderno-sua-arte-rosa.jpg" },
-  { id: "mini-caderno",        name: "Mini Caderno com Inicial",        category: "cadernos",  desc: "Bolso, nome e inicial personalizados",   price: 24.90, favorite: false, photo: "imagens/produtos/mini-caderno-iniciais.jpg" },
-  { id: "chaveiro-acrilico",   name: "Chaveiro Personalizado",          category: "chaveiros", desc: "Formato disco de vinil, com frase",      price: 19.90, favorite: true,  photo: "imagens/produtos/chaveiros-vinil.jpg" },
-  { id: "quadro-formando",     name: "Porta-retrato Formando",          category: "quadros",   desc: "MDF, com foto e ano de formatura",       price: 54.90, favorite: true,  photo: "imagens/produtos/quadro-formando.jpg" },
-  { id: "quadro-padrinho",     name: "Porta-retrato Padrinho/Madrinha", category: "quadros",   desc: "Madeira, com foto e dedicatória",        price: 49.90, favorite: false, photo: "imagens/produtos/quadro-padrinho.jpg" },
-  { id: "quadro-coracao",      name: "Quadro Coração da Família",       category: "quadros",   desc: "Formato coração, foto e frase",          price: 44.90, favorite: false, photo: "imagens/produtos/quadro-coracao-familia.jpg" },
-  { id: "quadro-estrela",      name: "Quadro Estrela Dia dos Pais",     category: "quadros",   desc: "Madeira, gravação personalizada",        price: 39.90, favorite: false, photo: "imagens/produtos/quadro-estrela-pai.jpg" },
-  { id: "quadro-casinha",      name: "Quadro Casinha da Família",       category: "quadros",   desc: "MDF, frase personalizada",               price: 39.90, favorite: false, photo: "imagens/produtos/quadro-casinha-familia.jpg" },
-  { id: "trofeu-professor",    name: "Troféu Melhor Professor",         category: "quadros",   desc: "MDF, gravação personalizada",            price: 44.90, favorite: false, photo: "imagens/produtos/trofeu-professor.jpg" },
-  { id: "quadro-redondo",      name: "Quadro Redondo de Formatura",     category: "quadros",   desc: "MDF, com nome da turma",                 price: 49.90, favorite: false, photo: "imagens/produtos/quadro-redondo-formatura.jpg" },
-  { id: "kit-formatura",       name: "Kit Formatura",                   category: "quadros",   desc: "Porta-retrato + chaveiros com nome",     price: 89.90, favorite: false, photo: "imagens/produtos/kit-quadro-chaveiro-formatura.jpg" },
-  { id: "medalhas",            name: "Medalha de Formatura",            category: "outros",    desc: "Madeira, com nome e fita colorida",      price: 24.90, favorite: false, photo: "imagens/produtos/medalhas-formatura.jpg" },
-  { id: "album-memorias",      name: "Álbum de Fotos Personalizado",    category: "outros",    desc: "Espiral, capa \"Memórias\"",              price: 49.90, favorite: true,  photo: "imagens/produtos/album-memorias-vermelho.jpg" },
-  { id: "cartoes-polaroide",   name: "Cartões Polaroide Personalizados", category: "polaroides", desc: "Kit com fotos estilo polaroid",         price: 29.90, favorite: true,  photo: "imagens/produtos/cartoes-polaroide.jpg" }
-];
+// Catálogo de produtos. Antes era uma lista fixa aqui — agora vem da
+// planilha do Google Sheets (ver SHEET_CSV_URL logo abaixo). Preenchido
+// automaticamente por loadProductsFromSheet() antes de renderizar a página.
+let PRODUCTS = [];
+
+// Link da planilha de produtos publicada como CSV.
+// Como publicar: na planilha → Arquivo → Compartilhar → Publicar na Web →
+// escolha a aba de produtos → formato "Valores separados por vírgula (.csv)"
+// → Publicar. Cole aqui o link gerado.
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTYj8AOCQZ_T5bWrHHGmMMuhiLwJ5qfaZHg4PjIJozQcORvLp4DUO214UkOedkXO-7TiJynIaI_-kyz/pub?output=csv";
+
+// Busca e converte os produtos da planilha. Aceita tanto cabeçalhos em
+// português (COD PRODUTO, NOME, CATEGORIA, DESCRIÇÃO, PREÇO, FAVORITO,
+// IMAGEM) quanto em inglês (id, name, category, desc, price, favorite,
+// photo) — o que estiver na sua planilha funciona. FAVORITO aceita
+// SIM/NÃO ou TRUE/FALSE. Uma linha sem preço válido não aparece no site
+// (fica de fora até você preencher o valor).
+function pickField(row, ...names) {
+  for (const name of names) {
+    if (row[name] !== undefined && row[name] !== null) return row[name];
+  }
+  return "";
+}
+
+async function loadProductsFromSheet() {
+  const response = await fetch(SHEET_CSV_URL);
+  const csvText = await response.text();
+  const parsed = Papa.parse(csvText, {
+    header: true,
+    skipEmptyLines: true,
+    transformHeader: (h) => h.trim()
+  });
+
+  PRODUCTS = parsed.data
+    .map((row) => {
+      const id = String(pickField(row, "id", "COD PRODUTO", "Cod Produto")).trim();
+      const name = String(pickField(row, "name", "NOME", "Nome")).trim();
+      const category = String(pickField(row, "category", "CATEGORIA", "Categoria")).trim().toLowerCase();
+      const desc = String(pickField(row, "desc", "DESCRIÇÃO", "Descrição")).trim();
+      const rawPrice = String(pickField(row, "price", "PREÇO", "Preço")).trim();
+      const rawFavorite = String(pickField(row, "favorite", "FAVORITO", "Favorito")).trim().toUpperCase();
+      const photo = String(pickField(row, "photo", "IMAGEM", "Imagem")).trim();
+
+      const price = parseFloat(rawPrice.replace(",", "."));
+
+      return {
+        id, name, category, desc,
+        price,
+        favorite: rawFavorite === "TRUE" || rawFavorite === "SIM",
+        photo: photo || undefined
+      };
+    })
+    // só entram no site linhas com nome e um preço válido preenchido
+    .filter((p) => p.id && p.name && !Number.isNaN(p.price));
+}
 
 const TESTIMONIALS = [
   { name: "Camila R.", text: "A garrafa personalizada chegou ainda mais linda do que eu imaginei. Atendimento super atencioso do início ao fim." },
@@ -196,11 +228,21 @@ function wireNavToggle() {
 }
 
 /* ---------------- init ---------------- */
-document.addEventListener("DOMContentLoaded", () => {
-  renderFilters();
-  renderFavorites();
+document.addEventListener("DOMContentLoaded", async () => {
   renderTestimonials();
   wireWaCtas();
   wireNavToggle();
   document.getElementById("year").textContent = new Date().getFullYear();
+
+  try {
+    await loadProductsFromSheet();
+    renderFilters();
+    renderFavorites();
+  } catch (err) {
+    console.error("Não foi possível carregar os produtos da planilha:", err);
+    document.getElementById("productGrid").innerHTML =
+      `<p style="grid-column:1/-1;text-align:center;color:var(--brown-soft);">
+        Não foi possível carregar os produtos agora. Tente novamente em instantes.
+      </p>`;
+  }
 });
