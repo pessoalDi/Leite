@@ -336,6 +336,15 @@ p { margin: 0 0 1em; max-width: 62ch; color: var(--brown-soft); }
   color: var(--rose-deep);
 }
 
+.cat-chip-photo {
+  padding: 0;
+  aspect-ratio: 1/1;
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+}
+.cat-chip-photo.active { border-width: 2.5px; }
+
 /* ============================================================
    PRODUCTS
    ============================================================ */
