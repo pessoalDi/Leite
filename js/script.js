@@ -15,9 +15,6 @@ const ICONS = {
   garrafas: `<svg viewBox="0 0 100 130" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M42 8h16v14c6 6 10 12 10 22v66a8 8 0 0 1-8 8H40a8 8 0 0 1-8-8V44c0-10 4-16 10-22V8Z"/><path d="M40 8h20"/><path d="M34 60h32"/></svg>`,
   cadernos: `<svg viewBox="0 0 100 130" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="16" y="12" width="68" height="96" rx="6"/><path d="M30 12v96" opacity="0.5"/><path d="M46 40c8-6 18-2 18 6s-14 8-14 16 10 10 18 6"/></svg>`,
   chaveiros: `<svg viewBox="0 0 100 130" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="38" cy="30" r="18"/><circle cx="38" cy="30" r="7"/><path d="M50 42 82 74"/><rect x="70" y="86" width="20" height="26" rx="5" transform="rotate(8 70 86)"/></svg>`,
-  canecas: `<svg viewBox="0 0 100 130" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 40h48v40a18 18 0 0 1-18 18H40a18 18 0 0 1-18-18V40Z"/><path d="M70 48h6a12 12 0 0 1 0 24h-6"/></svg>`,
-  copos: `<svg viewBox="0 0 100 130" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="30" y="10" width="40" height="16" rx="4"/><path d="M34 26h32l6 12v72a10 10 0 0 1-10 10H38a10 10 0 0 1-10-10V38l6-12Z"/></svg>`,
-  ecobags: `<svg viewBox="0 0 100 130" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M26 40h48l6 66a6 6 0 0 1-6 6H26a6 6 0 0 1-6-6l6-66Z"/><path d="M36 40v-8a14 14 0 0 1 28 0v8"/></svg>`,
   kits: `<svg viewBox="0 0 140 140" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="18" y="46" width="104" height="76" rx="8"/><path d="M18 70h104"/><path d="M40 46c0-14 10-24 30-24s30 10 30 24"/></svg>`,
   quadros: `<svg viewBox="0 0 100 130" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="14" y="14" width="72" height="102" rx="6"/><circle cx="38" cy="46" r="8"/><path d="M22 96l20-24 16 16 12-14 8 22"/></svg>`,
   outros: `<svg viewBox="0 0 140 140" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M70 118S22 90 22 54a26 26 0 0 1 48-14 26 26 0 0 1 48 14c0 36-48 64-48 64Z"/></svg>`
@@ -29,46 +26,33 @@ const CATEGORIES = [
   { id: "garrafas",  label: "Garrafas"  },
   { id: "cadernos",  label: "Cadernos",  photo: "imagens/produtos/categoria-cadernos.jpg" },
   { id: "chaveiros", label: "Chaveiros", photo: "imagens/produtos/categoria-chaveiros.jpg" },
-  { id: "canecas",   label: "Canecas"   },
-  { id: "copos",     label: "Copos"     },
-  { id: "ecobags",   label: "Ecobags"   },
   { id: "quadros",   label: "Quadros",   photo: "imagens/produtos/categoria-quadros.jpg" },
   { id: "kits",      label: "Kits"      },
   { id: "outros",    label: "Outros",    photo: "imagens/produtos/categoria-polaroides.jpg" }
 ];
 
 // Catálogo de produtos. "favorite: true" aparece em "Nossos queridinhos".
-// "photo": caminho de uma foto real em imagens/produtos — quando ausente,
-// o card usa o ícone de linha da categoria como espaço reservado.
+// Só produtos com foto real (photo) — sem itens de espaço reservado.
 const PRODUCTS = [
-  { id: "garrafa-termica",  name: "Garrafa Térmica Personalizada", category: "garrafas",  desc: "Inox, nome ou logo personalizados",  price: 69.90,  favorite: true,  photo: "imagens/produtos/garrafa-termica-preta.jpg" },
-  { id: "garrafa-squeeze",  name: "Garrafa Squeeze Personalizada", category: "garrafas",  desc: "Com mosquetão, diversas cores",       price: 49.90,  favorite: false, photo: "imagens/produtos/garrafa-squeeze-mosquetao.jpg" },
-  { id: "caderno-capa",     name: "Caderno Personalizado",         category: "cadernos",  desc: "Espiral, capa \"Sua arte aqui\"",       price: 39.90,  favorite: true,  photo: "imagens/produtos/caderno-sua-arte-amarelo.jpg" },
-  { id: "caderno-rosa",     name: "Caderno Personalizado Rosa",    category: "cadernos",  desc: "Espiral, capa personalizada",         price: 39.90,  favorite: false, photo: "imagens/produtos/caderno-sua-arte-rosa.jpg" },
-  { id: "mini-caderno",     name: "Mini Caderno com Inicial",      category: "cadernos",  desc: "Bolso, nome e inicial personalizados", price: 24.90,  favorite: false, photo: "imagens/produtos/mini-caderno-iniciais.jpg" },
-  { id: "caderno-pautado",  name: "Bloco de Notas Personalizado",  category: "cadernos",  desc: "80 folhas, pautado",                  price: 24.90,  favorite: false },
-  { id: "chaveiro-acrilico",name: "Chaveiro Personalizado",        category: "chaveiros", desc: "Formato disco de vinil, com frase",   price: 19.90,  favorite: true,  photo: "imagens/produtos/chaveiros-vinil.jpg" },
-  { id: "chaveiro-casal",   name: "Chaveiro de Casal",             category: "chaveiros", desc: "Par de chaveiros combinando",        price: 34.90,  favorite: false },
-  { id: "caneca-porcelana", name: "Caneca Personalizada",          category: "canecas",   desc: "Porcelana, 325ml",                   price: 34.90,  favorite: true  },
-  { id: "caneca-termica",   name: "Copo Térmico com Alça",         category: "canecas",   desc: "Inox, com alça e canudo",             price: 64.90,  favorite: false, photo: "imagens/produtos/copo-termico-mockup.jpg" },
-  { id: "copo-termico",     name: "Copo Térmico com Alça",         category: "copos",     desc: "Inox, com alça e canudo",             price: 64.90,  favorite: true,  photo: "imagens/produtos/copo-termico-alca.jpg" },
-  { id: "copo-long",        name: "Copo Long Drink Personalizado", category: "copos",     desc: "350ml, acrílico resistente",          price: 29.90,  favorite: false },
-  { id: "ecobag-basica",    name: "Ecobag Personalizada",          category: "ecobags",   desc: "Algodão cru, estampa exclusiva",     price: 39.90,  favorite: true  },
-  { id: "ecobag-bolso",     name: "Ecobag com Bolso Personalizada",category: "ecobags",   desc: "Reforçada, com bolso frontal",       price: 49.90,  favorite: false },
-  { id: "quadro-formando",  name: "Porta-retrato Formando",        category: "quadros",   desc: "MDF, com foto e ano de formatura",    price: 54.90,  favorite: true,  photo: "imagens/produtos/quadro-formando.jpg" },
-  { id: "quadro-padrinho",  name: "Porta-retrato Padrinho/Madrinha", category: "quadros", desc: "Madeira, com foto e dedicatória",     price: 49.90,  favorite: false, photo: "imagens/produtos/quadro-padrinho.jpg" },
-  { id: "quadro-coracao",   name: "Quadro Coração da Família",     category: "quadros",   desc: "Formato coração, foto e frase",       price: 44.90,  favorite: false, photo: "imagens/produtos/quadro-coracao-familia.jpg" },
-  { id: "quadro-estrela",   name: "Quadro Estrela Dia dos Pais",   category: "quadros",   desc: "Madeira, gravação personalizada",     price: 39.90,  favorite: false, photo: "imagens/produtos/quadro-estrela-pai.jpg" },
-  { id: "quadro-casinha",   name: "Quadro Casinha da Família",     category: "quadros",   desc: "MDF, frase personalizada",            price: 39.90,  favorite: false, photo: "imagens/produtos/quadro-casinha-familia.jpg" },
-  { id: "trofeu-professor", name: "Troféu Melhor Professor",       category: "quadros",   desc: "MDF, gravação personalizada",         price: 44.90,  favorite: false, photo: "imagens/produtos/trofeu-professor.jpg" },
-  { id: "quadro-redondo",   name: "Quadro Redondo de Formatura",   category: "quadros",   desc: "MDF, com nome da turma",              price: 49.90,  favorite: false, photo: "imagens/produtos/quadro-redondo-formatura.jpg" },
-  { id: "kit-maternidade",  name: "Kit Maternidade",               category: "kits",      desc: "Garrafa + caderno + chaveiro",       price: 129.90, favorite: true  },
-  { id: "kit-presente",     name: "Kit Presente Especial",         category: "kits",      desc: "Caneca + ecobag + cartão",           price: 99.90,  favorite: false },
-  { id: "kit-formatura",    name: "Kit Formatura",                 category: "kits",      desc: "Porta-retrato + chaveiros com nome", price: 89.90,  favorite: false, photo: "imagens/produtos/kit-quadro-chaveiro-formatura.jpg" },
-  { id: "medalhas",         name: "Medalha de Formatura",          category: "outros",    desc: "Madeira, com nome e fita colorida",  price: 24.90,  favorite: false, photo: "imagens/produtos/medalhas-formatura.jpg" },
-  { id: "album-memorias",   name: "Álbum de Fotos Personalizado",  category: "outros",    desc: "Espiral, capa \"Memórias\"",           price: 49.90,  favorite: true,  photo: "imagens/produtos/album-memorias-vermelho.jpg" },
-  { id: "cartoes-polaroide",name: "Cartões Polaroide Personalizados", category: "outros", desc: "Kit com fotos estilo polaroid",       price: 29.90,  favorite: false, photo: "imagens/produtos/cartoes-polaroide.jpg" },
-  { id: "porta-copo",       name: "Porta-copo Personalizado",      category: "outros",    desc: "Conjunto com 4 unidades",             price: 29.90,  favorite: false }
+  { id: "garrafa-termica",     name: "Garrafa Térmica Personalizada",   category: "garrafas",  desc: "Inox, nome ou logo personalizados",     price: 69.90, favorite: true,  photo: "imagens/produtos/garrafa-termica-preta.jpg" },
+  { id: "garrafa-squeeze",     name: "Garrafa Squeeze Personalizada",   category: "garrafas",  desc: "Com mosquetão, diversas cores",          price: 49.90, favorite: false, photo: "imagens/produtos/garrafa-squeeze-mosquetao.jpg" },
+  { id: "copo-termico",        name: "Copo Térmico com Alça",           category: "garrafas",  desc: "Inox, com alça e canudo",                price: 64.90, favorite: true,  photo: "imagens/produtos/copo-termico-alca.jpg" },
+  { id: "copo-termico-grande", name: "Copo Térmico com Alça — Grande",  category: "garrafas",  desc: "Modelo XL, com alça e canudo",           price: 74.90, favorite: false, photo: "imagens/produtos/copo-termico-mockup.jpg" },
+  { id: "caderno-capa",        name: "Caderno Personalizado",           category: "cadernos",  desc: "Espiral, capa \"Sua arte aqui\"",         price: 39.90, favorite: true,  photo: "imagens/produtos/caderno-sua-arte-amarelo.jpg" },
+  { id: "caderno-rosa",        name: "Caderno Personalizado Rosa",      category: "cadernos",  desc: "Espiral, capa personalizada",            price: 39.90, favorite: false, photo: "imagens/produtos/caderno-sua-arte-rosa.jpg" },
+  { id: "mini-caderno",        name: "Mini Caderno com Inicial",        category: "cadernos",  desc: "Bolso, nome e inicial personalizados",   price: 24.90, favorite: false, photo: "imagens/produtos/mini-caderno-iniciais.jpg" },
+  { id: "chaveiro-acrilico",   name: "Chaveiro Personalizado",          category: "chaveiros", desc: "Formato disco de vinil, com frase",      price: 19.90, favorite: true,  photo: "imagens/produtos/chaveiros-vinil.jpg" },
+  { id: "quadro-formando",     name: "Porta-retrato Formando",          category: "quadros",   desc: "MDF, com foto e ano de formatura",       price: 54.90, favorite: true,  photo: "imagens/produtos/quadro-formando.jpg" },
+  { id: "quadro-padrinho",     name: "Porta-retrato Padrinho/Madrinha", category: "quadros",   desc: "Madeira, com foto e dedicatória",        price: 49.90, favorite: false, photo: "imagens/produtos/quadro-padrinho.jpg" },
+  { id: "quadro-coracao",      name: "Quadro Coração da Família",       category: "quadros",   desc: "Formato coração, foto e frase",          price: 44.90, favorite: false, photo: "imagens/produtos/quadro-coracao-familia.jpg" },
+  { id: "quadro-estrela",      name: "Quadro Estrela Dia dos Pais",     category: "quadros",   desc: "Madeira, gravação personalizada",        price: 39.90, favorite: false, photo: "imagens/produtos/quadro-estrela-pai.jpg" },
+  { id: "quadro-casinha",      name: "Quadro Casinha da Família",       category: "quadros",   desc: "MDF, frase personalizada",               price: 39.90, favorite: false, photo: "imagens/produtos/quadro-casinha-familia.jpg" },
+  { id: "trofeu-professor",    name: "Troféu Melhor Professor",         category: "quadros",   desc: "MDF, gravação personalizada",            price: 44.90, favorite: false, photo: "imagens/produtos/trofeu-professor.jpg" },
+  { id: "quadro-redondo",      name: "Quadro Redondo de Formatura",     category: "quadros",   desc: "MDF, com nome da turma",                 price: 49.90, favorite: false, photo: "imagens/produtos/quadro-redondo-formatura.jpg" },
+  { id: "kit-formatura",       name: "Kit Formatura",                   category: "kits",      desc: "Porta-retrato + chaveiros com nome",     price: 89.90, favorite: false, photo: "imagens/produtos/kit-quadro-chaveiro-formatura.jpg" },
+  { id: "medalhas",            name: "Medalha de Formatura",            category: "outros",    desc: "Madeira, com nome e fita colorida",      price: 24.90, favorite: false, photo: "imagens/produtos/medalhas-formatura.jpg" },
+  { id: "album-memorias",      name: "Álbum de Fotos Personalizado",    category: "outros",    desc: "Espiral, capa \"Memórias\"",              price: 49.90, favorite: true,  photo: "imagens/produtos/album-memorias-vermelho.jpg" },
+  { id: "cartoes-polaroide",   name: "Cartões Polaroide Personalizados", category: "outros",   desc: "Kit com fotos estilo polaroid",          price: 29.90, favorite: true,  photo: "imagens/produtos/cartoes-polaroide.jpg" }
 ];
 
 const TESTIMONIALS = [
