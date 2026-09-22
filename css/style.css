@@ -229,6 +229,7 @@ p { margin: 0 0 1em; max-width: 62ch; color: var(--brown-soft); }
   min-height: 640px;
   display: flex;
   align-items: center;
+  background: var(--cream);
 }
 
 .hero-photo {
