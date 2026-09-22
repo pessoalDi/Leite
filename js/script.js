@@ -73,28 +73,6 @@ function categoryLabel(id) {
   return found ? found.label : id;
 }
 
-/* ---------------- render: categories row ---------------- */
-function renderCategories() {
-  const row = document.getElementById("catRow");
-  row.innerHTML = CATEGORIES.map((cat) =>
-    cat.photo
-      ? `
-    <button class="cat-chip cat-chip-photo" data-cat="${cat.id}" style="background-image:url('${cat.photo}')" aria-label="${cat.label}"></button>`
-      : `
-    <button class="cat-chip" data-cat="${cat.id}">
-      <span class="cat-icon">${ICONS[cat.id] || ""}</span>
-      <span>${cat.label}</span>
-    </button>`
-  ).join("");
-
-  row.querySelectorAll(".cat-chip").forEach((chip) => {
-    chip.addEventListener("click", () => {
-      const cat = chip.dataset.cat;
-      document.getElementById("produtos").scrollIntoView({ behavior: "smooth" });
-      setActiveFilter(cat);
-    });
-  });
-}
 
 /* ---------------- render: filter buttons ---------------- */
 function renderFilters() {
@@ -219,7 +197,6 @@ function wireNavToggle() {
 
 /* ---------------- init ---------------- */
 document.addEventListener("DOMContentLoaded", () => {
-  renderCategories();
   renderFilters();
   renderFavorites();
   renderTestimonials();
