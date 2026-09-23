@@ -27,6 +27,73 @@ const ICONS = {
 const SUPABASE_URL = "https://oxhemopmgqbxlwezdvfm.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im94aGVtb3BtZ3FieGx3ZXpkdmZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxOTI1MDIsImV4cCI6MjEwNTc2ODUwMn0.m8P-QdEkQo6uRmSwD28c0Uo3VIz5uSAMOpEQPG9oNzw";
 
+// ============================================================
+// Ideias de presente — a gaveta do canto superior esquerdo.
+// Os "id" precisam ser IGUAIS aos da Gerência (js/app.js → IDEIAS),
+// porque é com eles que cada produto é marcado.
+// Os grupos com "faixa" filtram pelo preço, sem precisar marcar.
+// ============================================================
+const IDEAS = [
+  {
+    group: "Datas comemorativas",
+    items: [
+      { id: "dia-das-maes-pais", label: "Dia das Mães e dos Pais" },
+      { id: "namorados",         label: "Dia dos Namorados e aniversário de namoro ou casamento" },
+      { id: "professores",       label: "Dia dos Professores" },
+      { id: "criancas",          label: "Dia das Crianças" },
+      { id: "natal",             label: "Natal e fim de ano", hint: "Brindes e agradecimentos" },
+      { id: "dia-da-mulher",     label: "Dia da Mulher" }
+    ]
+  },
+  {
+    group: "Ocasiões e celebrações",
+    items: [
+      { id: "aniversario",  label: "Aniversários" },
+      { id: "maternidade",  label: "Maternidade, chá de bebê e revelação" },
+      { id: "religioso",    label: "Batizado, primeira comunhão e crisma" },
+      { id: "casamento",    label: "Casamento e padrinhos" },
+      { id: "formatura",    label: "Formaturas" },
+      { id: "casa-nova",    label: "Boas-vindas e casa nova" }
+    ]
+  },
+  {
+    group: "Para quem vai receber",
+    items: [
+      { id: "para-ele",  label: "Para ele" },
+      { id: "para-ela",  label: "Para ela" },
+      { id: "amigos",    label: "Para amigos e melhores amigos" },
+      { id: "casais",    label: "Para casais" },
+      { id: "avos",      label: "Para avós" },
+      { id: "pets",      label: "Para pets e donos de pet" },
+      { id: "trabalho",  label: "Para chefe, equipe e colegas de trabalho" }
+    ]
+  },
+  {
+    group: "Por estilo do mimo",
+    items: [
+      { id: "cultura-pop", label: "Gamer e cultura pop", hint: "Fãs de séries e música" },
+      { id: "viagem",      label: "Viagem e aventuras", hint: "Passaportes, tags de mala, chaveiros" },
+      { id: "papelaria",   label: "Organização e papelaria afetiva", hint: "Planners, agendas, cadernos" },
+      { id: "corporativo", label: "Corporativo e eventos", hint: "Kits personalizados para empresas" }
+    ]
+  },
+  {
+    group: "Por faixa de preço",
+    items: [
+      { id: "ate-30",    label: "Mimos até R$ 30", hint: "Ótimo para lembrancinhas de última hora", min: 0,  max: 30 },
+      { id: "30-a-70",   label: "Kits de R$ 30 a R$ 70", min: 30.01, max: 70 },
+      { id: "acima-70",  label: "Presentes especiais", hint: "Acima de R$ 70", min: 70.01, max: Infinity }
+    ]
+  }
+];
+
+const ALL_IDEAS = IDEAS.flatMap((g) => g.items);
+const findIdea = (id) => ALL_IDEAS.find((i) => i.id === id);
+
+// Filtros ativos na vitrine
+let activeCategory = "todos";
+let activeIdea = null;
+
 // Preenchidos por loadCatalog() antes de renderizar a página.
 // CATEGORIES só inclui categorias ativas que tenham ao menos um produto.
 let CATEGORIES = [];
@@ -46,10 +113,16 @@ async function fetchTable(path) {
 
 async function loadCatalog() {
   // o banco já só devolve o que está marcado como ativo (regras do setup.sql)
-  const [cats, prods] = await Promise.all([
-    fetchTable("categorias?select=id,nome&order=posicao.asc,nome.asc"),
-    fetchTable("produtos?select=id,nome,categoria,descricao,preco,favorito,imagem_url&order=posicao.asc,id.asc")
-  ]);
+  const campos = "id,nome,categoria,descricao,preco,favorito,imagem_url";
+  const ordem = "order=posicao.asc,id.asc";
+  const cats = await fetchTable("categorias?select=id,nome&order=posicao.asc,nome.asc");
+  let prods;
+  try {
+    prods = await fetchTable(`produtos?select=${campos},tags&${ordem}`);
+  } catch (err) {
+    // banco ainda sem a coluna "tags" (migração não rodada): segue sem as ideias marcadas
+    prods = await fetchTable(`produtos?select=${campos}&${ordem}`);
+  }
 
   const activeCats = new Set(cats.map((c) => c.id));
 
@@ -63,7 +136,8 @@ async function loadCatalog() {
       desc: p.descricao || "",
       price: Number(p.preco),
       favorite: !!p.favorito,
-      photo: p.imagem_url || undefined
+      photo: p.imagem_url || undefined,
+      tags: Array.isArray(p.tags) ? p.tags : []
     }));
 
   const used = new Set(PRODUCTS.map((p) => p.category));
@@ -97,7 +171,17 @@ function categoryLabel(id) {
   return found ? found.label : id;
 }
 
-/* ---------------- render: filter buttons ---------------- */
+/* ---------------- filtros: categoria + ideia ---------------- */
+function matchesIdea(p, idea) {
+  if (!idea) return true;
+  if (idea.max !== undefined) return p.price >= idea.min && p.price <= idea.max;
+  return p.tags.includes(idea.id);
+}
+
+function countForIdea(idea) {
+  return PRODUCTS.filter((p) => matchesIdea(p, idea)).length;
+}
+
 function renderFilters() {
   const row = document.getElementById("filterRow");
   const all = [{ id: "todos", label: "Todos" }, ...CATEGORIES];
@@ -113,13 +197,44 @@ function renderFilters() {
 }
 
 function setActiveFilter(cat) {
+  activeCategory = cat;
   document.querySelectorAll(".filter-btn").forEach((btn) => {
     btn.classList.toggle("active", btn.dataset.cat === cat);
   });
-  document.querySelectorAll(".cat-chip").forEach((chip) => {
-    chip.classList.toggle("active", chip.dataset.cat === cat);
-  });
-  renderProducts(cat);
+  renderProducts();
+}
+
+function setActiveIdea(ideaId, { scroll = true } = {}) {
+  activeIdea = ideaId ? findIdea(ideaId) || null : null;
+
+  // mantém o link compartilhável: site.com/?ideia=dia-das-maes-pais
+  const url = new URL(window.location.href);
+  if (activeIdea) url.searchParams.set("ideia", activeIdea.id);
+  else url.searchParams.delete("ideia");
+  history.replaceState(null, "", url);
+
+  // ao escolher uma ideia, começa mostrando todas as categorias
+  if (activeIdea) setActiveFilter("todos");
+  else renderProducts();
+
+  renderIdeaBanner();
+  renderIdeasList();
+  if (scroll) document.getElementById("produtos").scrollIntoView({ behavior: "smooth" });
+}
+
+function renderIdeaBanner() {
+  const banner = document.getElementById("ideaBanner");
+  if (!activeIdea) {
+    banner.hidden = true;
+    banner.innerHTML = "";
+    return;
+  }
+  const n = countForIdea(activeIdea);
+  banner.hidden = false;
+  banner.innerHTML = `
+    <p>Ideias para <strong>${esc(activeIdea.label)}</strong> · ${n} ${n === 1 ? "mimo" : "mimos"}</p>
+    <button class="idea-clear" type="button">Ver todos os produtos</button>`;
+  banner.querySelector(".idea-clear").addEventListener("click", () => setActiveIdea(null, { scroll: false }));
 }
 
 /* ---------------- render: product grid ---------------- */
@@ -130,11 +245,23 @@ function productPhotoHtml(p) {
     : (ICONS[p.category] || "");
 }
 
-function renderProducts(filter) {
+function renderProducts() {
   const grid = document.getElementById("productGrid");
-  const list = filter && filter !== "todos"
-    ? PRODUCTS.filter((p) => p.category === filter)
-    : PRODUCTS;
+  const list = PRODUCTS.filter((p) =>
+    (activeCategory === "todos" || p.category === activeCategory) && matchesIdea(p, activeIdea)
+  );
+
+  if (!list.length) {
+    const tema = activeIdea ? activeIdea.label : categoryLabel(activeCategory);
+    const msg = `Olá! Estou procurando um presente na linha "${tema}". Vocês conseguem criar algo personalizado?`;
+    grid.innerHTML = `
+      <div class="idea-empty">
+        <h3>Esse mimo a gente cria sob medida</h3>
+        <p>Ainda não temos peças no site em <strong>“${esc(tema)}”</strong>${activeIdea && activeCategory !== "todos" ? ` na categoria ${esc(categoryLabel(activeCategory))}` : ""}, mas é só contar sua ideia que a gente monta.</p>
+        <a class="btn btn-primary" href="${waLink(msg)}" target="_blank" rel="noopener">Pedir pelo WhatsApp</a>
+      </div>`;
+    return;
+  }
 
   grid.innerHTML = list
     .map((p) => {
@@ -201,6 +328,74 @@ function wireWaCtas() {
   });
 }
 
+/* ---------------- gaveta de ideias ---------------- */
+function renderIdeasList() {
+  const list = document.getElementById("ideasList");
+  list.innerHTML = IDEAS.map((g) => `
+    <section class="ideas-group">
+      <h3>${esc(g.group)}</h3>
+      <ul>
+        ${g.items.map((i) => {
+          const n = countForIdea(i);
+          const ativo = activeIdea && activeIdea.id === i.id;
+          return `
+          <li>
+            <button type="button" class="idea-link${ativo ? " active" : ""}" data-idea="${esc(i.id)}"${ativo ? ' aria-current="true"' : ""}>
+              <span>${esc(i.label)}${i.hint ? `<small>${esc(i.hint)}</small>` : ""}</span>
+              <span class="idea-count${n ? "" : " zero"}" aria-label="${n} produtos">${n}</span>
+            </button>
+          </li>`;
+        }).join("")}
+      </ul>
+    </section>`).join("");
+}
+
+function openIdeas() {
+  const drawer = document.getElementById("ideasDrawer");
+  const overlay = document.getElementById("ideasOverlay");
+  drawer.hidden = false;
+  overlay.hidden = false;
+  // força o navegador a aplicar o estado inicial antes de animar
+  void drawer.offsetWidth;
+  drawer.classList.add("open");
+  overlay.classList.add("show");
+  document.body.classList.add("no-scroll");
+  document.getElementById("ideasBtn").setAttribute("aria-expanded", "true");
+  document.getElementById("ideasClose").focus();
+}
+
+function closeIdeas() {
+  const drawer = document.getElementById("ideasDrawer");
+  const overlay = document.getElementById("ideasOverlay");
+  if (drawer.hidden) return;
+  drawer.classList.remove("open");
+  overlay.classList.remove("show");
+  document.body.classList.remove("no-scroll");
+  const btn = document.getElementById("ideasBtn");
+  btn.setAttribute("aria-expanded", "false");
+  setTimeout(() => {
+    drawer.hidden = true;
+    overlay.hidden = true;
+  }, 280);
+  btn.focus();
+}
+
+function wireIdeas() {
+  renderIdeasList();
+  document.getElementById("ideasBtn").addEventListener("click", openIdeas);
+  document.getElementById("ideasClose").addEventListener("click", closeIdeas);
+  document.getElementById("ideasOverlay").addEventListener("click", closeIdeas);
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeIdeas();
+  });
+  document.getElementById("ideasList").addEventListener("click", (e) => {
+    const btn = e.target.closest(".idea-link");
+    if (!btn) return;
+    closeIdeas();
+    setActiveIdea(btn.dataset.idea);
+  });
+}
+
 /* ---------------- mobile nav toggle ---------------- */
 function wireNavToggle() {
   const toggle = document.getElementById("navToggle");
@@ -222,12 +417,18 @@ document.addEventListener("DOMContentLoaded", async () => {
   renderTestimonials();
   wireWaCtas();
   wireNavToggle();
+  wireIdeas();
   document.getElementById("year").textContent = new Date().getFullYear();
 
   try {
     await loadCatalog();
     renderFilters();
     renderFavorites();
+    renderIdeasList();
+
+    // link direto para uma ideia: site.com/?ideia=dia-das-maes-pais
+    const ideiaDoLink = new URLSearchParams(window.location.search).get("ideia");
+    if (ideiaDoLink && findIdea(ideiaDoLink)) setActiveIdea(ideiaDoLink);
   } catch (err) {
     console.error("Não foi possível carregar os produtos:", err);
     document.getElementById("productGrid").innerHTML =
