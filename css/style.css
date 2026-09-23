@@ -154,6 +154,7 @@ p { margin: 0 0 1em; max-width: 62ch; color: var(--brown-soft); }
   gap: 20px;
 }
 
+.header-left { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
 .brand { display: flex; align-items: center; flex-shrink: 0; }
 .brand-logo {
   height: 54px;
@@ -344,7 +345,7 @@ p { margin: 0 0 1em; max-width: 62ch; color: var(--brown-soft); }
 /* ============================================================
    PRODUCTS
    ============================================================ */
-.products { padding: 60px 0; }
+.products { padding: 60px 0; scroll-margin-top: 72px; }
 .products-heading { text-align: center; margin-bottom: 30px; }
 .products-heading p { margin: 0 auto; }
 
@@ -625,6 +626,147 @@ p { margin: 0 0 1em; max-width: 62ch; color: var(--brown-soft); }
 }
 
 /* ============================================================
+   IDEIAS DE PRESENTE — botão, gaveta e faixa de filtro
+   ============================================================ */
+.ideas-btn {
+  display: inline-flex; align-items: center; gap: 9px;
+  height: 42px;
+  padding: 0 16px 0 12px;
+  border-radius: 999px;
+  border: 1.5px solid var(--rose-soft);
+  background: var(--white);
+  color: var(--rose-deep);
+  font: 500 0.92rem var(--font-body);
+  cursor: pointer;
+  box-shadow: var(--shadow-card);
+  transition: border-color 0.18s ease, transform 0.18s ease;
+}
+.ideas-btn:hover { border-color: var(--rose); transform: translateY(-1px); }
+.ideas-btn[aria-expanded="true"] { border-color: var(--rose); }
+.ideas-dots { display: inline-flex; flex-direction: column; gap: 4px; }
+.ideas-dots i {
+  display: block;
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.ideas-overlay {
+  position: fixed; inset: 0; z-index: 200;
+  background: rgba(74, 52, 42, 0.38);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.ideas-overlay.show { opacity: 1; }
+
+.ideas-drawer {
+  position: fixed; top: 0; left: 0; bottom: 0; z-index: 210;
+  width: min(380px, 88vw);
+  background: var(--cream);
+  box-shadow: 18px 0 50px -20px rgba(74, 52, 42, 0.45);
+  display: flex; flex-direction: column;
+  transform: translateX(-102%);
+  transition: transform 0.28s ease;
+  padding-top: env(safe-area-inset-top, 0px);
+}
+.ideas-drawer.open { transform: translateX(0); }
+
+.ideas-head {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+  padding: 22px 20px 16px 24px;
+  border-bottom: 1px solid rgba(74, 52, 42, 0.1);
+}
+.ideas-head h2 { margin: 0; font-size: 1.55rem; }
+.ideas-head .script-note { font-size: 1.2rem; }
+.ideas-close {
+  display: flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px;
+  border: none; border-radius: 50%;
+  background: var(--white);
+  color: var(--brown);
+  cursor: pointer;
+  box-shadow: var(--shadow-card);
+  flex-shrink: 0;
+}
+
+.ideas-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px 12px calc(28px + env(safe-area-inset-bottom, 0px));
+  overscroll-behavior: contain;
+}
+.ideas-group { padding: 16px 12px 4px; }
+.ideas-group h3 {
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  color: var(--rose-deep);
+  margin: 0 0 6px;
+}
+.ideas-group ul { list-style: none; margin: 0; padding: 0; }
+
+.idea-link {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  padding: 10px 12px;
+  margin: 0 -12px;
+  width: calc(100% + 24px);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: none;
+  color: var(--brown);
+  font: 400 0.96rem/1.35 var(--font-body);
+  text-align: left;
+  cursor: pointer;
+}
+.idea-link:hover { background: var(--white); }
+.idea-link.active { background: var(--white); color: var(--rose-deep); font-weight: 500; }
+.idea-link small { display: block; font-size: 0.78rem; color: var(--brown-soft); margin-top: 2px; }
+.idea-count {
+  flex-shrink: 0;
+  min-width: 26px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--rose-soft);
+  color: var(--rose-deep);
+  font-size: 0.75rem;
+  text-align: center;
+}
+.idea-count.zero { background: transparent; color: var(--nude); }
+
+body.no-scroll { overflow: hidden; }
+
+/* faixa que aparece acima dos produtos quando uma ideia está ativa */
+.idea-banner {
+  display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;
+  max-width: 760px;
+  margin: 0 auto 22px;
+  padding: 14px 16px 14px 20px;
+  background: var(--white);
+  border: 1.5px solid var(--rose-soft);
+  border-radius: var(--radius-md);
+}
+.idea-banner p { margin: 0; color: var(--brown); }
+.idea-banner strong { color: var(--rose-deep); font-weight: 500; }
+.idea-banner .idea-clear {
+  border: none; background: none; cursor: pointer;
+  font: 500 0.9rem var(--font-body);
+  color: var(--rose-deep);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 6px 4px;
+}
+
+.idea-empty {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 36px 20px;
+  background: var(--white);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+}
+.idea-empty h3 { margin-bottom: 6px; }
+.idea-empty p { margin: 0 auto 18px; }
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 
@@ -646,6 +788,9 @@ p { margin: 0 0 1em; max-width: 62ch; color: var(--brown-soft); }
     border-bottom: none;
   }
   .brand-logo { height: 44px; }
+  .header-left { gap: 10px; }
+  .ideas-btn { width: 42px; padding: 0; justify-content: center; }
+  .ideas-btn-label { display: none; }
   .brand-tagline { font-size: 0.66rem; }
 
   /* Hero: a mesma foto já usada no projeto, como fundo real da seção,
