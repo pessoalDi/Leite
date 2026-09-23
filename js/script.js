@@ -1,16 +1,16 @@
 /* ============================================================
    Lets Mimos — script principal
    ============================================================
-   Para configurar o site do cliente, edite apenas as duas
-   constantes abaixo (WHATSAPP_NUMBER) e o array PRODUCTS.
+   Produtos, preços, fotos e ordem são gerenciados pela
+   Gerência Leiticia. Aqui só é preciso configurar o
+   WHATSAPP_NUMBER e as duas chaves do Supabase abaixo.
    ============================================================ */
 
 // Número de WhatsApp do vendedor, formato internacional, só dígitos:
 // 55 (Brasil) + DDD + número. Troque pelo número real antes de publicar.
 const WHATSAPP_NUMBER = "5592900000000";
 
-// Ícones usados como "foto" provisória de cada categoria (troque por
-// fotos reais em /images quando o cliente enviar o material).
+// Ícones usados como "foto" provisória quando o produto não tem foto.
 const ICONS = {
   garrafas: `<svg viewBox="0 0 100 130" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M42 8h16v14c6 6 10 12 10 22v66a8 8 0 0 1-8 8H40a8 8 0 0 1-8-8V44c0-10 4-16 10-22V8Z"/><path d="M40 8h20"/><path d="M34 60h32"/></svg>`,
   cadernos: `<svg viewBox="0 0 100 130" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="16" y="12" width="68" height="96" rx="6"/><path d="M30 12v96" opacity="0.5"/><path d="M46 40c8-6 18-2 18 6s-14 8-14 16 10 10 18 6"/></svg>`,
@@ -20,72 +20,64 @@ const ICONS = {
   outros: `<svg viewBox="0 0 140 140" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M70 118S22 90 22 54a26 26 0 0 1 48-14 26 26 0 0 1 48 14c0 36-48 64-48 64Z"/></svg>`
 };
 
-// Categorias exibidas nos atalhos e nos filtros. "photo" é opcional:
-// quando presente, o atalho mostra a foto no lugar do ícone de linha.
-const CATEGORIES = [
-  { id: "garrafas",   label: "Garrafas",   photo: "imagens/produtos/categoria-garrafas.jpg" },
-  { id: "cadernos",   label: "Cadernos",   photo: "imagens/produtos/categoria-cadernos.jpg" },
-  { id: "chaveiros",  label: "Chaveiros",  photo: "imagens/produtos/categoria-chaveiros.jpg" },
-  { id: "quadros",    label: "Quadros",    photo: "imagens/produtos/categoria-quadros.jpg" },
-  { id: "polaroides", label: "Polaroides", photo: "imagens/produtos/categoria-polaroides.jpg" },
-  { id: "outros",     label: "Outros"      }
-];
+// ============================================================
+// Dados do catálogo — vêm da Gerência Leiticia (Supabase).
+// Os MESMOS valores do js/config.js da Gerência.
+// ============================================================
+const SUPABASE_URL = "https://oxhemopmgqbxlwezdvfm.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im94aGVtb3BtZ3FieGx3ZXpkdmZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxOTI1MDIsImV4cCI6MjEwNTc2ODUwMn0.m8P-QdEkQo6uRmSwD28c0Uo3VIz5uSAMOpEQPG9oNzw";
 
-// Catálogo de produtos. Antes era uma lista fixa aqui — agora vem da
-// planilha do Google Sheets (ver SHEET_CSV_URL logo abaixo). Preenchido
-// automaticamente por loadProductsFromSheet() antes de renderizar a página.
+// Preenchidos por loadCatalog() antes de renderizar a página.
+// CATEGORIES só inclui categorias ativas que tenham ao menos um produto.
+let CATEGORIES = [];
 let PRODUCTS = [];
 
-// Link da planilha de produtos, publicada como CSV (aba "produto").
-// Como publicar: na planilha, com a aba certa selecionada → Arquivo →
-// Compartilhar → Publicar na Web → escolha a aba (não "Documento inteiro")
-// → formato CSV → Publicar. Cole aqui o link gerado.
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTYj8AOCQZ_T5bWrHHGmMMuhiLwJ5qfaZHg4PjIJozQcORvLp4DUO214UkOedkXO-7TiJynIaI_-kyz/pub?gid=205037285&single=true&output=csv";
-
-// Busca e converte os produtos da planilha. Aceita tanto cabeçalhos em
-// português (COD PRODUTO, NOME, CATEGORIA, DESCRIÇÃO, PREÇO, FAVORITO,
-// IMAGEM) quanto em inglês (id, name, category, desc, price, favorite,
-// photo) — o que estiver na sua planilha funciona. FAVORITO aceita
-// SIM/NÃO ou TRUE/FALSE. Uma linha sem preço válido não aparece no site
-// (fica de fora até você preencher o valor).
-function pickField(row, ...names) {
-  for (const name of names) {
-    if (row[name] !== undefined && row[name] !== null) return row[name];
-  }
-  return "";
-}
-
-async function loadProductsFromSheet() {
-  const response = await fetch(SHEET_CSV_URL);
-  const csvText = await response.text();
-  const parsed = Papa.parse(csvText, {
-    header: true,
-    skipEmptyLines: true,
-    transformHeader: (h) => h.trim()
+async function fetchTable(path) {
+  const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
+    headers: {
+      apikey: SUPABASE_ANON_KEY,
+      Authorization: `Bearer ${SUPABASE_ANON_KEY}`
+    },
+    cache: "no-store"
   });
-
-  PRODUCTS = parsed.data
-    .map((row) => {
-      const id = String(pickField(row, "id", "COD PRODUTO", "Cod Produto")).trim();
-      const name = String(pickField(row, "name", "NOME", "Nome")).trim();
-      const category = String(pickField(row, "category", "CATEGORIA", "Categoria")).trim().toLowerCase();
-      const desc = String(pickField(row, "desc", "DESCRIÇÃO", "Descrição")).trim();
-      const rawPrice = String(pickField(row, "price", "PREÇO", "Preço")).trim();
-      const rawFavorite = String(pickField(row, "favorite", "FAVORITO", "Favorito")).trim().toUpperCase();
-      const photo = String(pickField(row, "photo", "IMAGEM", "Imagem")).trim();
-
-      const price = parseFloat(rawPrice.replace(",", "."));
-
-      return {
-        id, name, category, desc,
-        price,
-        favorite: rawFavorite === "TRUE" || rawFavorite === "SIM",
-        photo: photo || undefined
-      };
-    })
-    // só entram no site linhas com nome e um preço válido preenchido
-    .filter((p) => p.id && p.name && !Number.isNaN(p.price));
+  if (!response.ok) throw new Error(`Supabase respondeu ${response.status}`);
+  return response.json();
 }
+
+async function loadCatalog() {
+  // o banco já só devolve o que está marcado como ativo (regras do setup.sql)
+  const [cats, prods] = await Promise.all([
+    fetchTable("categorias?select=id,nome&order=posicao.asc,nome.asc"),
+    fetchTable("produtos?select=id,nome,categoria,descricao,preco,favorito,imagem_url&order=posicao.asc,id.asc")
+  ]);
+
+  const activeCats = new Set(cats.map((c) => c.id));
+
+  PRODUCTS = prods
+    // produto de categoria escondida não aparece; sem categoria entra em "outros"
+    .filter((p) => !p.categoria || activeCats.has(p.categoria))
+    .map((p) => ({
+      id: p.id,
+      name: p.nome,
+      category: p.categoria || "outros",
+      desc: p.descricao || "",
+      price: Number(p.preco),
+      favorite: !!p.favorito,
+      photo: p.imagem_url || undefined
+    }));
+
+  const used = new Set(PRODUCTS.map((p) => p.category));
+  CATEGORIES = cats
+    .filter((c) => used.has(c.id))
+    .map((c) => ({ id: c.id, label: c.nome }));
+  if (used.has("outros") && !CATEGORIES.some((c) => c.id === "outros")) {
+    CATEGORIES.push({ id: "outros", label: "Outros" });
+  }
+}
+
+// Escapa texto vindo do banco antes de inserir no HTML.
+const esc = (s) =>
+  String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 const TESTIMONIALS = [
   { name: "Camila R.", text: "A garrafa personalizada chegou ainda mais linda do que eu imaginei. Atendimento super atencioso do início ao fim." },
@@ -105,13 +97,12 @@ function categoryLabel(id) {
   return found ? found.label : id;
 }
 
-
 /* ---------------- render: filter buttons ---------------- */
 function renderFilters() {
   const row = document.getElementById("filterRow");
   const all = [{ id: "todos", label: "Todos" }, ...CATEGORIES];
   row.innerHTML = all
-    .map((c) => `<button class="filter-btn" data-cat="${c.id}">${c.label}</button>`)
+    .map((c) => `<button class="filter-btn" data-cat="${esc(c.id)}">${esc(c.label)}</button>`)
     .join("");
 
   row.querySelectorAll(".filter-btn").forEach((btn) => {
@@ -132,11 +123,10 @@ function setActiveFilter(cat) {
 }
 
 /* ---------------- render: product grid ---------------- */
-// Gera o conteúdo do "quadro-foto" de um produto: foto real quando existir,
-// ou o ícone de linha da categoria como espaço reservado.
+// Foto real quando existir, ou o ícone de linha da categoria como espaço reservado.
 function productPhotoHtml(p) {
   return p.photo
-    ? `<img src="${p.photo}" alt="${p.name}" loading="lazy">`
+    ? `<img src="${esc(p.photo)}" alt="${esc(p.name)}" loading="lazy">`
     : (ICONS[p.category] || "");
 }
 
@@ -153,9 +143,9 @@ function renderProducts(filter) {
       <article class="product-card">
         <div class="product-photo${p.photo ? "" : " icon-frame"}">${productPhotoHtml(p)}</div>
         <div class="product-body">
-          <span class="product-cat-tag">${categoryLabel(p.category)}</span>
-          <h3>${p.name}</h3>
-          <p class="product-desc">${p.desc}</p>
+          <span class="product-cat-tag">${esc(categoryLabel(p.category))}</span>
+          <h3>${esc(p.name)}</h3>
+          ${p.desc ? `<p class="product-desc">${esc(p.desc)}</p>` : ""}
           <p class="product-price">${brl(p.price)}</p>
           <a class="product-btn" href="${waLink(message)}" target="_blank" rel="noopener">
             Personalizar pelo WhatsApp
@@ -181,7 +171,7 @@ function renderFavorites() {
       return `
       <a class="fav-card" href="${waLink(message)}" target="_blank" rel="noopener">
         <div class="fav-photo${p.photo ? "" : " icon-frame"}">${productPhotoHtml(p)}</div>
-        <h3>${p.name}</h3>
+        <h3>${esc(p.name)}</h3>
         <p class="product-price">${brl(p.price)}</p>
       </a>`;
     })
@@ -235,11 +225,11 @@ document.addEventListener("DOMContentLoaded", async () => {
   document.getElementById("year").textContent = new Date().getFullYear();
 
   try {
-    await loadProductsFromSheet();
+    await loadCatalog();
     renderFilters();
     renderFavorites();
   } catch (err) {
-    console.error("Não foi possível carregar os produtos da planilha:", err);
+    console.error("Não foi possível carregar os produtos:", err);
     document.getElementById("productGrid").innerHTML =
       `<p style="grid-column:1/-1;text-align:center;color:var(--brown-soft);">
         Não foi possível carregar os produtos agora. Tente novamente em instantes.
