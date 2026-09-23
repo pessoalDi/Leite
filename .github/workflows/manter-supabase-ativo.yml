@@ -1,0 +1,33 @@
+# Mantém o Supabase (Gerência Leiticia) ativo no plano gratuito.
+# O Supabase pausa projetos gratuitos após 7 dias sem atividade;
+# este robô faz uma consulta leve a cada 3 dias para evitar isso.
+name: Manter Supabase ativo
+
+on:
+  schedule:
+    - cron: "0 12 */3 * *"   # a cada 3 dias, 12:00 UTC (08:00 em Manaus)
+  workflow_dispatch:          # permite rodar na mão pela aba Actions
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Consultar o banco
+        env:
+          SUPABASE_URL: https://oxhemopmgqbxlwezdvfm.supabase.co
+          SUPABASE_ANON_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im94aGVtb3BtZ3FieGx3ZXpkdmZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxOTI1MDIsImV4cCI6MjEwNTc2ODUwMn0.m8P-QdEkQo6uRmSwD28c0Uo3VIz5uSAMOpEQPG9oNzw
+        run: |
+          for tentativa in 1 2 3; do
+            status=$(curl -s -o resposta.json -w "%{http_code}" \
+              "$SUPABASE_URL/rest/v1/produtos?select=id&limit=1" \
+              -H "apikey: $SUPABASE_ANON_KEY" \
+              -H "Authorization: Bearer $SUPABASE_ANON_KEY")
+            echo "Tentativa $tentativa: HTTP $status"
+            if [ "$status" = "200" ]; then
+              echo "Supabase ativo."
+              exit 0
+            fi
+            sleep 20
+          done
+          echo "Supabase não respondeu. Verifique se o projeto foi pausado no painel."
+          exit 1
