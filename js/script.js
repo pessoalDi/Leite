@@ -8,7 +8,7 @@
 
 // Número de WhatsApp do vendedor, formato internacional, só dígitos:
 // 55 (Brasil) + DDD + número. Troque pelo número real antes de publicar.
-const WHATSAPP_NUMBER = "5592900000000";
+const WHATSAPP_NUMBER = "5592993264251";
 
 // Ícones usados como "foto" provisória quando o produto não tem foto.
 const ICONS = {
