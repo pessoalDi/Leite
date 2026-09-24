@@ -34,6 +34,14 @@ function priceText(info) {
   return info.from ? `a partir de ${brl(info.value)}` : brl(info.value);
 }
 
+// Endereço desta página: usado no link da foto que vai no WhatsApp
+const PAGE_URL = window.location.origin + window.location.pathname;
+
+// Link curto que abre exatamente esta foto: galeria.html?foto=1a2b3c4d
+function photoLink(p) {
+  return `${PAGE_URL}?foto=${p.id.slice(0, 8)}`;
+}
+
 function waLink(message) {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
 }
@@ -180,7 +188,7 @@ function showPhoto(index) {
   priceEl.textContent = priceText(info);
   priceEl.hidden = !info;
   const valor = info ? `, ${info.from ? "que sai a partir de" : "no valor de"} ${brl(info.value)},` : "";
-  const msg = `Olá! Vi na galeria de ideias um trabalho de ${typeName(p.type)}${p.caption ? ` ("${p.caption}")` : ""}${valor} e quero um parecido. Pode me ajudar?`;
+  const msg = `Olá! Vi na galeria de ideias um trabalho de *${typeName(p.type)}*${p.caption ? ` ("${p.caption}")` : ""}${valor} e quero um parecido.\n\nFoto: ${photoLink(p)}\n\nPode me ajudar?`;
   document.getElementById("lightboxCta").href = waLink(msg);
   const multiple = viewerList.length > 1;
   document.getElementById("lightboxPrev").hidden = !multiple;
@@ -206,7 +214,15 @@ function wireViewer() {
   document.getElementById("lightboxClose").addEventListener("click", closeViewer);
   document.getElementById("lightboxPrev").addEventListener("click", () => showPhoto(viewerIndex - 1));
   document.getElementById("lightboxNext").addEventListener("click", () => showPhoto(viewerIndex + 1));
-  dlg.addEventListener("close", () => document.body.classList.remove("no-scroll"));
+  dlg.addEventListener("close", () => {
+    document.body.classList.remove("no-scroll");
+    // tira o ?foto= da barra de endereço ao fechar
+    const url = new URL(window.location.href);
+    if (url.searchParams.has("foto")) {
+      url.searchParams.delete("foto");
+      history.replaceState(null, "", url);
+    }
+  });
   // clicar fora da foto fecha
   dlg.addEventListener("click", (e) => { if (e.target === dlg) closeViewer(); });
   dlg.addEventListener("keydown", (e) => {
@@ -259,8 +275,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   try {
     await loadGallery();
-    const fromLink = new URLSearchParams(window.location.search).get("tipo");
-    setType(fromLink || "todos", { updateUrl: false });
+    const params = new URLSearchParams(window.location.search);
+    setType(params.get("tipo") || "todos", { updateUrl: false });
+
+    // link da foto enviado pelo WhatsApp: galeria.html?foto=1a2b3c4d
+    const fotoDoLink = (params.get("foto") || "").toLowerCase();
+    if (fotoDoLink) {
+      const foto = PHOTOS.find((p) => p.id.toLowerCase().startsWith(fotoDoLink));
+      if (foto) openViewer(foto.id);
+    }
   } catch (err) {
     console.error("Não foi possível carregar a galeria:", err);
     document.getElementById("galleryContent").innerHTML =

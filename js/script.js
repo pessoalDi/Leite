@@ -93,11 +93,13 @@ const findIdea = (id) => ALL_IDEAS.find((i) => i.id === id);
 // Filtros ativos na vitrine
 let activeCategory = "todos";
 let activeIdea = null;
+let activeIdeaView = "produtos"; // dentro de uma ideia: "produtos" ou "kits"
 
 // Preenchidos por loadCatalog() antes de renderizar a página.
 // CATEGORIES só inclui categorias ativas que tenham ao menos um produto.
 let CATEGORIES = [];
 let PRODUCTS = [];
+let KITS = [];  // kits prontos por ideia (Gerência → aba Kits)
 
 async function fetchTable(path) {
   const response = await fetch(`${SUPABASE_URL}/rest/v1/${path}`, {
@@ -140,6 +142,30 @@ async function loadCatalog() {
       tags: Array.isArray(p.tags) ? p.tags : []
     }));
 
+  // kits: se a tabela ainda não existir, o site segue normal sem kits
+  try {
+    const kits = await fetchTable("kits?select=id,nome,descricao,preco,imagem_url,ideias,itens&order=posicao.asc,criado_em.asc");
+    const byId = Object.fromEntries(PRODUCTS.map((p) => [p.id, p]));
+    KITS = kits
+      .map((k) => {
+        // só entram os itens que estão visíveis no site
+        const items = (k.itens || []).map((id) => byId[id]).filter(Boolean);
+        return {
+          id: k.id,
+          name: k.nome,
+          desc: k.descricao || "",
+          price: Number(k.preco),
+          photo: k.imagem_url || undefined,
+          tags: Array.isArray(k.ideias) ? k.ideias : [],
+          items,
+          itemsTotal: items.reduce((t, it) => t + it.price, 0)
+        };
+      })
+      .filter((k) => k.items.length || k.photo);
+  } catch (err) {
+    KITS = [];
+  }
+
   const used = new Set(PRODUCTS.map((p) => p.category));
   CATEGORIES = cats
     .filter((c) => used.has(c.id))
@@ -178,8 +204,13 @@ function matchesIdea(p, idea) {
   return p.tags.includes(idea.id);
 }
 
+function kitsForIdea(idea) {
+  return KITS.filter((k) => matchesIdea(k, idea));
+}
+
+// na gaveta, o número de cada ideia soma produtos + kits
 function countForIdea(idea) {
-  return PRODUCTS.filter((p) => matchesIdea(p, idea)).length;
+  return PRODUCTS.filter((p) => matchesIdea(p, idea)).length + kitsForIdea(idea).length;
 }
 
 function renderFilters() {
@@ -213,11 +244,15 @@ function setActiveIdea(ideaId, { scroll = true } = {}) {
   else url.searchParams.delete("ideia");
   history.replaceState(null, "", url);
 
-  // ao escolher uma ideia, começa mostrando todas as categorias
+  // dentro de uma ideia, os filtros de categoria somem: aparecem todos os produtos
+  // da ideia e, ao lado, a opção "Kits".
+  activeIdeaView = "produtos";
+  document.getElementById("filterRow").hidden = !!activeIdea;
   if (activeIdea) setActiveFilter("todos");
   else renderProducts();
 
   renderIdeaBanner();
+  renderIdeaViews();
   renderIdeasList();
   if (scroll) document.getElementById("produtos").scrollIntoView({ behavior: "smooth" });
 }
@@ -237,6 +272,129 @@ function renderIdeaBanner() {
   banner.querySelector(".idea-clear").addEventListener("click", () => setActiveIdea(null, { scroll: false }));
 }
 
+function renderIdeaViews() {
+  const box = document.getElementById("ideaViews");
+  if (!activeIdea) {
+    box.hidden = true;
+    box.innerHTML = "";
+    return;
+  }
+  const nKits = kitsForIdea(activeIdea).length;
+  const nProd = PRODUCTS.filter((p) => matchesIdea(p, activeIdea)).length;
+  box.hidden = false;
+  box.innerHTML = `
+    <button type="button" class="idea-view-btn${activeIdeaView === "produtos" ? " active" : ""}" data-view="produtos" aria-pressed="${activeIdeaView === "produtos"}">
+      Todos os produtos <span class="idea-view-count">${nProd}</span>
+    </button>
+    <button type="button" class="idea-view-btn${activeIdeaView === "kits" ? " active" : ""}" data-view="kits" aria-pressed="${activeIdeaView === "kits"}">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M3 12h18M12 8v13"/><path d="M12 8c-2-3-6-4-6-1.5S10 8 12 8Zm0 0c2-3 6-4 6-1.5S14 8 12 8Z"/></svg>
+      Kits <span class="idea-view-count">${nKits}</span>
+    </button>`;
+  box.querySelectorAll(".idea-view-btn").forEach((b) =>
+    b.addEventListener("click", () => {
+      activeIdeaView = b.dataset.view;
+      renderIdeaViews();
+      renderProducts();
+    })
+  );
+}
+
+/* ---------------- render: kits ---------------- */
+function kitPhotoHtml(k) {
+  if (k.photo) return `<img src="${esc(k.photo)}" alt="${esc(k.name)}" loading="lazy">`;
+  const photos = k.items.map((it) => it.photo).filter(Boolean).slice(0, 4);
+  if (photos.length <= 1) {
+    return photos[0] ? `<img src="${esc(photos[0])}" alt="${esc(k.name)}" loading="lazy">` : (ICONS.outros || "");
+  }
+  // sem foto do kit: mosaico com as fotos dos produtos
+  return `<span class="kit-collage n${photos.length}">${photos.map((u) => `<img src="${esc(u)}" alt="" loading="lazy">`).join("")}</span>`;
+}
+
+function kitSavings(k) {
+  const diff = k.itemsTotal - k.price;
+  return diff >= 1 ? diff : 0;
+}
+
+function renderKits() {
+  const grid = document.getElementById("productGrid");
+  const list = kitsForIdea(activeIdea);
+  if (!list.length) {
+    const msg = `Olá! Queria montar um kit de presente para "${activeIdea.label}". Pode me ajudar?`;
+    grid.innerHTML = `
+      <div class="idea-empty">
+        <h3>A gente monta o kit com você</h3>
+        <p>Ainda não temos kits prontos para <strong>“${esc(activeIdea.label)}”</strong>. Conta o que você imagina que a gente junta as peças.</p>
+        <a class="btn btn-primary" href="${waLink(msg)}" target="_blank" rel="noopener">Montar meu kit pelo WhatsApp</a>
+      </div>`;
+    return;
+  }
+  grid.innerHTML = list.map((k) => {
+    const save = kitSavings(k);
+    const names = k.items.map((it) => it.name);
+    return `
+      <article class="product-card kit-card">
+        <button type="button" class="product-photo${k.photo || k.items.some((it) => it.photo) ? "" : " icon-frame"}" data-open-kit="${esc(k.id)}" aria-label="Ver ${esc(k.name)} ampliado">${kitPhotoHtml(k)}</button>
+        <div class="product-body">
+          <span class="product-cat-tag kit-tag">Kit · ${k.items.length} ${k.items.length === 1 ? "item" : "itens"}</span>
+          <h3>${esc(k.name)}</h3>
+          ${names.length ? `<p class="kit-items">Inclui: ${esc(names.join(" + "))}</p>` : ""}
+          <p class="product-price">${save ? `<s class="kit-old">${brl(k.itemsTotal)}</s> ` : ""}${brl(k.price)}</p>
+          ${save ? `<span class="kit-save">Economize ${brl(save)}</span>` : ""}
+          <a class="product-btn" href="${waLink(kitMessage(k))}" target="_blank" rel="noopener">
+            <svg class="product-btn-icon" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M16.02 3C9.4 3 4 8.36 4 14.96c0 2.2.6 4.27 1.66 6.05L4 29l8.2-2.15a12.9 12.9 0 0 0 3.82.58h.01c6.62 0 12.02-5.36 12.02-11.96C28.05 8.36 22.65 3 16.02 3Z"/></svg>
+            <span class="label-full">Quero este kit</span>
+            <span class="label-short">Quero</span>
+          </a>
+        </div>
+      </article>`;
+  }).join("");
+}
+
+// Link que abre exatamente este kit: site.com/?kit=1a2b3c4d
+function kitLink(k) {
+  return `${SITE_BASE}?kit=${k.id.slice(0, 8)}`;
+}
+
+function kitMessage(k) {
+  const ideia = activeIdea ? ` (${activeIdea.label})` : "";
+  const itens = k.items.length ? `\nInclui: ${k.items.map((it) => `${it.name} (cód. ${it.id})`).join(", ")}.` : "";
+  return `Olá! Gostaria do *${k.name}*${ideia}, no valor de ${brl(k.price)}.${itens}\n\nFoto: ${kitLink(k)}\n\nPode me passar mais detalhes?`;
+}
+
+function openKit(idPrefix) {
+  const pref = String(idPrefix).toLowerCase();
+  const k = KITS.find((x) => x.id.toLowerCase().startsWith(pref));
+  if (!k) return false;
+  const dlg = document.getElementById("productViewer");
+  const img = document.getElementById("productViewerImg");
+  const stage = dlg.querySelector(".lightbox-stage");
+  const cover = k.photo || (k.items.find((it) => it.photo) || {}).photo;
+  if (cover) { img.src = cover; img.alt = k.name; stage.hidden = false; }
+  else { img.removeAttribute("src"); stage.hidden = true; }
+  document.getElementById("productViewerCat").textContent = `Kit · ${k.items.length} ${k.items.length === 1 ? "item" : "itens"}`;
+  document.getElementById("productViewerTitle").textContent = k.name;
+  document.getElementById("productViewerCode").textContent = "";
+  const save = kitSavings(k);
+  document.getElementById("productViewerPrice").innerHTML =
+    `${save ? `<s class="kit-old">${brl(k.itemsTotal)}</s> ` : ""}${brl(k.price)}${save ? ` <span class="kit-save">Economize ${brl(save)}</span>` : ""}`;
+  const desc = document.getElementById("productViewerDesc");
+  desc.textContent = k.desc;
+  desc.hidden = !k.desc;
+  const items = document.getElementById("productViewerItems");
+  items.innerHTML = k.items.map((it) => `
+    <li>
+      <span class="kv-thumb">${it.photo ? `<img src="${esc(it.photo)}" alt="" loading="lazy">` : ""}</span>
+      <span class="kv-name">${esc(it.name)}</span>
+    </li>`).join("");
+  items.hidden = !k.items.length;
+  const cta = document.getElementById("productViewerCta");
+  cta.href = waLink(kitMessage(k));
+  cta.textContent = "Quero este kit";
+  if (!dlg.open) dlg.showModal();
+  document.body.classList.add("no-scroll");
+  return true;
+}
+
 /* ---------------- render: product grid ---------------- */
 // Foto real quando existir, ou o ícone de linha da categoria como espaço reservado.
 function productPhotoHtml(p) {
@@ -246,6 +404,7 @@ function productPhotoHtml(p) {
 }
 
 function renderProducts() {
+  if (activeIdea && activeIdeaView === "kits") return renderKits();
   const grid = document.getElementById("productGrid");
   const list = PRODUCTS.filter((p) =>
     (activeCategory === "todos" || p.category === activeCategory) && matchesIdea(p, activeIdea)
@@ -321,7 +480,10 @@ function openProduct(id) {
   const desc = document.getElementById("productViewerDesc");
   desc.textContent = p.desc;
   desc.hidden = !p.desc;
-  document.getElementById("productViewerCta").href = waLink(productMessage(p));
+  document.getElementById("productViewerItems").hidden = true;
+  const cta = document.getElementById("productViewerCta");
+  cta.href = waLink(productMessage(p));
+  cta.textContent = "Pedir pelo WhatsApp";
   if (!dlg.open) dlg.showModal();
   document.body.classList.add("no-scroll");
   return true;
@@ -330,6 +492,8 @@ function openProduct(id) {
 function wireProductViewer() {
   // tocar na foto do card abre o produto ampliado (com descrição completa)
   document.getElementById("productGrid").addEventListener("click", (e) => {
+    const kit = e.target.closest("[data-open-kit]");
+    if (kit) return openKit(kit.dataset.openKit);
     const photo = e.target.closest("[data-open]");
     if (photo) openProduct(photo.dataset.open);
   });
@@ -342,8 +506,9 @@ function wireProductViewer() {
     document.body.classList.remove("no-scroll");
     // tira o ?produto= da barra de endereço ao fechar
     const url = new URL(window.location.href);
-    if (url.searchParams.has("produto")) {
+    if (url.searchParams.has("produto") || url.searchParams.has("kit")) {
       url.searchParams.delete("produto");
+      url.searchParams.delete("kit");
       history.replaceState(null, "", url);
     }
   });
@@ -499,6 +664,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     // link da foto enviado pelo WhatsApp: site.com/?produto=CAD01
     const produtoDoLink = new URLSearchParams(window.location.search).get("produto");
     if (produtoDoLink) openProduct(produtoDoLink);
+
+    // link do kit enviado pelo WhatsApp: site.com/?kit=1a2b3c4d
+    const kitDoLink = new URLSearchParams(window.location.search).get("kit");
+    if (kitDoLink) openKit(kitDoLink);
   } catch (err) {
     console.error("Não foi possível carregar os produtos:", err);
     document.getElementById("productGrid").innerHTML =
