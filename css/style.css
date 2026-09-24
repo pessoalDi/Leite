@@ -227,82 +227,148 @@ p { margin: 0 0 1em; max-width: 62ch; color: var(--brown-soft); }
    ============================================================ */
 .hero {
   position: relative;
-  overflow: hidden;
-  min-height: 640px;
   display: flex;
   align-items: center;
+  /* ocupa quase a tela toda e deixa "Nossos produtos" aparecer lá embaixo */
+  min-height: calc(100vh - 200px);
+  min-height: calc(100svh - 200px);
   background: var(--cream);
 }
 
-.hero-photo {
-  position: absolute;
-  inset: 0;
-  background-size: 122%;
-  background-position: 82% center;
-  background-repeat: no-repeat;
-  z-index: 0;
-}
-.hero-photo::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  /* véu claro e forte à esquerda (onde fica o texto), some
-     progressivamente até liberar totalmente os produtos à direita */
-  background: linear-gradient(
-    to right,
-    var(--cream) 0%,
-    var(--cream) 20%,
-    rgba(251, 243, 236, 0.94) 32%,
-    rgba(251, 243, 236, 0.72) 42%,
-    rgba(251, 243, 236, 0.32) 52%,
-    rgba(251, 243, 236, 0) 64%
-  );
-}
-
 .hero-inner {
-  position: relative; z-index: 1;
-  max-width: 1400px;
+  position: relative;
+  max-width: var(--content-width);
   margin: 0 auto;
-  padding: 100px clamp(20px, 6vw, 64px) 100px clamp(20px, 4vw, 48px);
   width: 100%;
+  padding: 48px 24px;
 }
 
-.hero-copy { max-width: 500px; }
+.hero-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: clamp(32px, 6vw, 88px);
+  align-items: center;
+}
+
+.hero-copy { max-width: 540px; }
 .hero-copy .script-note {
   display: inline-flex;
   align-items: center;
   gap: 8px;
   color: var(--rose-deep);
-  font-size: 1.2rem;
-  margin-bottom: 10px;
+  font-size: 1.35rem;
+  margin-bottom: 14px;
 }
 .script-note .heart-mark { flex-shrink: 0; opacity: 0.85; }
-.hero-copy h1 { color: var(--brown); }
-.hero-copy .btn-primary {
-  padding: 17px 32px;
-  font-size: 1.02rem;
+.hero-copy h1 {
+  color: var(--brown);
+  font-size: clamp(2.6rem, 4.6vw, 4rem);
+  line-height: 1.04;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+}
+.hero-lede {
+  font-size: 1.12rem;
+  line-height: 1.6;
+  max-width: 44ch;
+  margin-bottom: 30px;
+}
+.hero-cta { padding: 17px 30px; font-size: 1.02rem; }
+.hero-cta-arrow { transition: transform 0.2s ease; }
+.hero-cta:hover .hero-cta-arrow { transform: translateX(4px); }
+
+.hero.no-offers .hero-grid { grid-template-columns: 1fr; }
+
+/* ---------- ofertas (lado direito) ---------- */
+.hero-offers {
+  background: var(--white);
+  border: 1px solid var(--rose-soft);
+  border-radius: var(--radius-lg);
+  padding: 30px 28px 28px;
+  box-shadow: var(--shadow-soft);
+}
+.offers-head {
+  display: flex; align-items: center; gap: 16px;
+}
+.offers-rule { flex: 1; height: 1px; background: var(--rose-soft); }
+.offers-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 2.6vw, 2.2rem);
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--rose-deep);
+  padding-left: 0.22em; /* compensa o espaçamento da última letra */
+}
+.offers-sub {
+  text-align: center;
+  margin: 8px auto 22px;
+  font-size: 0.92rem;
 }
 
-.hero-scroll {
-  position: absolute;
-  z-index: 1;
-  left: 50%;
-  bottom: 26px;
-  transform: translateX(-50%);
-  display: flex;
+.offers-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-rows: 1fr; /* cards da mesma altura */
+  gap: 12px;
+}
+
+.offer-card {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr) 16px;
   align-items: center;
-  justify-content: center;
+  gap: 12px;
+  padding: 16px 16px 16px 14px;
+  border: 1px solid var(--nude);
+  border-radius: var(--radius-md);
+  background: var(--cream);
+  color: var(--brown);
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+  transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.offer-icon {
+  display: flex; align-items: center; justify-content: center;
   width: 40px; height: 40px;
   border-radius: 50%;
-  color: var(--rose-deep);
+  border: 1px solid var(--rose-soft);
   background: var(--white);
+  color: var(--rose-deep);
+  transition: background 0.25s ease, color 0.25s ease, border-color 0.25s ease;
+}
+.offer-name {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.08rem;
+  line-height: 1.2;
+  color: var(--brown);
+}
+.offer-detail {
+  display: block;
+  margin-top: 3px;
+  font-size: 0.8rem;
+  color: var(--rose-deep);
+}
+.offer-arrow { color: var(--nude); transition: transform 0.25s ease, color 0.25s ease; }
+
+.offer-card:hover,
+.offer-card:focus-visible {
+  transform: translateY(-3px);
+  background: #F8E6E1;
+  border-color: var(--rose);
   box-shadow: var(--shadow-card);
-  animation: bob 2.2s ease-in-out infinite;
 }
-@keyframes bob {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(6px); }
+.offer-card:hover .offer-icon,
+.offer-card:focus-visible .offer-icon {
+  background: var(--rose);
+  border-color: var(--rose);
+  color: var(--white);
 }
+.offer-card:hover .offer-arrow,
+.offer-card:focus-visible .offer-arrow { color: var(--rose-deep); transform: translateX(3px); }
+
 
 /* ============================================================
    CATEGORIES
@@ -1134,47 +1200,40 @@ body.no-scroll { overflow: hidden; }
   .lightbox-actions { width: 100%; }
   .brand-tagline { font-size: 0.66rem; }
 
-  /* Hero: a mesma foto já usada no projeto, como fundo real da seção,
-     com overlay horizontal (creme à esquerda, produtos livres à direita) */
-  .hero {
-    min-height: clamp(600px, 92vw, 700px);
-    align-items: center;
-  }
-  .hero-photo {
-    background-size: cover;
-    background-position: 74% 38%;
-  }
-  .hero-photo::after {
-    background: linear-gradient(
-      to right,
-      var(--cream) 0%,
-      var(--cream) 40%,
-      rgba(251, 243, 236, 0.9) 52%,
-      rgba(251, 243, 236, 0.5) 64%,
-      rgba(251, 243, 236, 0.12) 76%,
-      rgba(251, 243, 236, 0) 88%
-    );
-  }
-
-  .hero-inner { padding: 0 24px; }
-  .hero-copy { max-width: 80%; }
-  .hero-copy .script-note { font-size: 1rem; }
-  .hero-copy h1 { font-size: clamp(38px, 9vw, 44px); line-height: 1.1; margin-bottom: 26px; }
-
-  .hero-copy .btn-primary {
+  /* Hero em uma coluna: título primeiro, ofertas logo abaixo (cards em 2 colunas) */
+  .hero { min-height: 0; }
+  .hero-inner { padding: 30px 16px 56px; }
+  .hero-grid { grid-template-columns: 1fr; gap: 30px; }
+  .hero-copy { max-width: none; }
+  .hero-copy .script-note { font-size: 1.12rem; margin-bottom: 10px; }
+  .hero-copy h1 { font-size: clamp(2.2rem, 10vw, 2.75rem); line-height: 1.06; margin-bottom: 14px; }
+  .hero-lede { font-size: 1rem; margin-bottom: 22px; }
+  .hero-cta {
     width: 100%;
-    max-width: 320px;
     height: 56px;
     padding: 0 24px;
     justify-content: center;
   }
 
-  .hero-scroll { display: none; }
+  .hero-offers { padding: 22px 14px 16px; border-radius: 22px; }
+  .offers-title { font-size: 1.5rem; letter-spacing: 0.18em; padding-left: 0.18em; }
+  .offers-sub { font-size: 0.85rem; margin: 6px auto 16px; }
+  .offers-grid { gap: 10px; }
+  .offer-card {
+    grid-template-columns: 1fr;
+    justify-items: start;
+    align-content: start;
+    gap: 10px;
+    padding: 14px 12px;
+  }
+  .offer-icon { width: 36px; height: 36px; }
+  .offer-name { font-size: 1rem; }
+  .offer-arrow { display: none; }
 }
 
 @media (max-width: 380px) {
-  .hero-copy { max-width: 88%; }
-  .hero-copy h1 { font-size: clamp(34px, 10vw, 38px); }
+  .hero-copy h1 { font-size: 2.05rem; }
+  .offer-card { padding: 12px 10px; }
 }
 
 /* celular: produtos em 2 colunas, cards compactos — cabem 4 na tela */

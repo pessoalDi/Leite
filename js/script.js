@@ -624,6 +624,86 @@ function wireWaCtas() {
   });
 }
 
+/* ---------------- ofertas do Hero ---------------- */
+// Os ícones disponíveis são os mesmos da Gerência (aba Ofertas).
+const OFFER_ICONS = {
+  presente: '<rect x="3" y="8" width="18" height="13" rx="2"/><path d="M3 12h18M12 8v13"/><path d="M12 8c-2-3-6-4-6-1.5S10 8 12 8Zm0 0c2-3 6-4 6-1.5S14 8 12 8Z"/>',
+  coracao: '<path d="M12 20S4 15 4 9.5A4.2 4.2 0 0 1 12 7.6a4.2 4.2 0 0 1 8 1.9C20 15 12 20 12 20Z"/>',
+  coracoes: '<path d="M9 18s-6-3.6-6-7.6A3.2 3.2 0 0 1 9 9a3.2 3.2 0 0 1 6 1.4"/><path d="M15.5 20.5S11 18 11 15a2.5 2.5 0 0 1 4.5-1.5A2.5 2.5 0 0 1 20 15c0 3-4.5 5.5-4.5 5.5Z"/>',
+  balao: '<ellipse cx="12" cy="9.5" rx="6" ry="7"/><path d="M12 16.5v1.5M12 18c0 2-2 2-2 4"/><path d="M11 16.3h2"/>',
+  brilho: '<path d="M12 3c.6 4.2 2.8 6.4 7 7-4.2.6-6.4 2.8-7 7-.6-4.2-2.8-6.4-7-7 4.2-.6 6.4-2.8 7-7Z"/><path d="M19 3v3M17.5 4.5h3"/>',
+  bolo: '<path d="M4 21h16v-7a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v7Z"/><path d="M4 16c1.3 1.2 2.7 1.2 4 0s2.7-1.2 4 0 2.7 1.2 4 0 2.7-1.2 4 0"/><path d="M12 12V8M12 5.5c.8-.8.8-1.7 0-2.5-.8.8-.8 1.7 0 2.5Z"/>',
+  estrela: '<path d="M12 3l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.8L12 3Z"/>',
+  flor: '<circle cx="12" cy="10" r="2.2"/><path d="M12 7.8C12 5 13.5 3.5 12 3c-1.5.5 0 2 0 4.8ZM14.2 10c2.8 0 4.3-1.5 4.8 0-.5 1.5-2 0-4.8 0ZM12 12.2c0 2.8 1.5 4.3 0 4.8-1.5-.5 0-2 0-4.8ZM9.8 10C7 10 5.5 11.5 5 10c.5-1.5 2 0 4.8 0Z"/><path d="M12 17v4"/>',
+  diploma: '<path d="M2 9l10-5 10 5-10 5L2 9Z"/><path d="M6 11v5c3 2 9 2 12 0v-5M22 9v6"/>',
+  bebe: '<circle cx="12" cy="8" r="4"/><path d="M5 21c0-4 3-7 7-7s7 3 7 7"/><path d="M10.5 8h.01M13.5 8h.01"/>',
+  arvore: '<path d="M12 3l5 7h-3l4 6H6l4-6H7l5-7Z"/><path d="M12 16v5"/>',
+  casa: '<path d="M4 11l8-7 8 7v9a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-9Z"/><path d="M10 21v-6h4v6"/>',
+  pata: '<circle cx="7" cy="10" r="1.6"/><circle cx="10.5" cy="6.5" r="1.6"/><circle cx="14.5" cy="6.5" r="1.6"/><circle cx="18" cy="10" r="1.6"/><path d="M12 12c-3 0-5 3-5 5.5 0 1.5 1.5 2 3 1.5s2.5-.5 4 0 3 0 3-1.5C17 15 15 12 12 12Z"/>',
+  tag: '<path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8Z"/><circle cx="7.5" cy="7.5" r="1.5"/>'
+};
+
+function offerIcon(key) {
+  const paths = OFFER_ICONS[key] || OFFER_ICONS.presente;
+  return `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
+}
+
+// Usadas enquanto a Gerência ainda não tem a tabela de ofertas (ou se ela não carregar).
+const DEFAULT_OFFERS = [
+  { name: "Dia dos Pais", icon: "presente", idea: "dia-das-maes-pais", detail: "" },
+  { name: "Dia das Mães", icon: "coracao", idea: "dia-das-maes-pais", detail: "" },
+  { name: "Dia dos Namorados", icon: "coracoes", idea: "namorados", detail: "" },
+  { name: "Dia das Crianças", icon: "balao", idea: "criancas", detail: "" },
+  { name: "Natal", icon: "brilho", idea: "natal", detail: "" },
+  { name: "Aniversários", icon: "brilho", idea: "aniversario", detail: "" }
+];
+
+let OFFERS = DEFAULT_OFFERS;
+let catalogReady = false;
+let pendingIdea = null;
+
+async function loadOffers() {
+  try {
+    const rows = await fetchTable("ofertas?select=nome,detalhe,icone,ideia&order=posicao.asc,criado_em.asc");
+    // tabela existe: vale o que está na Gerência (mesmo que você tenha tirado todas)
+    OFFERS = rows.map((o) => ({ name: o.nome, detail: o.detalhe || "", icon: o.icone || "presente", idea: o.ideia || "" }));
+  } catch (err) {
+    OFFERS = DEFAULT_OFFERS;
+  }
+}
+
+function renderOffers() {
+  const panel = document.getElementById("heroOffers");
+  const grid = document.getElementById("offersGrid");
+  panel.hidden = !OFFERS.length;
+  document.getElementById("hero").classList.toggle("no-offers", !OFFERS.length);
+  grid.innerHTML = OFFERS.map((o, i) => {
+    const inner = `
+      <span class="offer-icon">${offerIcon(o.icon)}</span>
+      <span class="offer-text">
+        <span class="offer-name">${esc(o.name)}</span>
+        ${o.detail ? `<span class="offer-detail">${esc(o.detail)}</span>` : ""}
+      </span>
+      <svg class="offer-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>`;
+    // com ideia ligada: mostra os presentes daquela ideia; sem ideia: abre o WhatsApp
+    if (o.idea && findIdea(o.idea)) {
+      return `<a class="offer-card" href="?ideia=${esc(o.idea)}" data-offer-idea="${esc(o.idea)}">${inner}</a>`;
+    }
+    const msg = `Olá! Vi a oferta de *${o.name}*${o.detail ? ` (${o.detail})` : ""} no site e quero saber mais.`;
+    return `<a class="offer-card" href="${waLink(msg)}" target="_blank" rel="noopener">${inner}</a>`;
+  }).join("");
+}
+
+function wireOffers() {
+  document.getElementById("offersGrid").addEventListener("click", (e) => {
+    const card = e.target.closest("[data-offer-idea]");
+    if (!card) return;
+    e.preventDefault();
+    if (catalogReady) setActiveIdea(card.dataset.offerIdea);
+    else pendingIdea = card.dataset.offerIdea; // abre assim que os produtos carregarem
+  });
+}
+
 /* ---------------- gaveta de ideias ---------------- */
 // ícone de cada grupo, para o título se destacar dos nomes das ideias
 const ICON_ATTRS = 'viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"';
@@ -720,6 +800,9 @@ function wireNavToggle() {
 document.addEventListener("DOMContentLoaded", async () => {
   renderTestimonials();
   wireWaCtas();
+  renderOffers();
+  wireOffers();
+  loadOffers().then(renderOffers);
   wireNavToggle();
   wireIdeas();
   wireProductViewer();
@@ -728,6 +811,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   try {
     await loadCatalog();
+    catalogReady = true;
     renderFilters();
     renderFavorites();
     renderIdeasList();
@@ -743,6 +827,9 @@ document.addEventListener("DOMContentLoaded", async () => {
     // link do kit enviado pelo WhatsApp: site.com/?kit=1a2b3c4d
     const kitDoLink = new URLSearchParams(window.location.search).get("kit");
     if (kitDoLink) openKit(kitDoLink);
+
+    // oferta clicada antes dos produtos terminarem de carregar
+    if (pendingIdea) setActiveIdea(pendingIdea);
   } catch (err) {
     console.error("Não foi possível carregar os produtos:", err);
     document.getElementById("productGrid").innerHTML =
