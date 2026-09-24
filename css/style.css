@@ -282,8 +282,15 @@ p { margin: 0 0 1em; max-width: 62ch; color: var(--brown-soft); }
 /* ---------- ofertas (lado direito) ---------- */
 .hero-offers { text-align: center; }
 .offers-head { margin-bottom: 26px; }
+.offers-heading {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 .offers-kicker {
-  margin: 0 auto -6px;
+  display: block;
+  margin: -4px 0 0 34%;
   font-family: var(--font-script);
   font-size: clamp(1.8rem, 2.6vw, 2.3rem);
   line-height: 1;
@@ -294,7 +301,7 @@ p { margin: 0 0 1em; max-width: 62ch; color: var(--brown-soft); }
   display: inline-flex; align-items: center; justify-content: center; gap: 10px;
   margin: 0;
   font-family: var(--font-display);
-  font-size: clamp(3.4rem, 6vw, 5.2rem);
+  font-size: clamp(3rem, 5.2vw, 4.6rem);
   font-weight: 600;
   line-height: 1;
   letter-spacing: -0.02em;
@@ -1193,7 +1200,7 @@ body.no-scroll { overflow: hidden; }
 
   .offers-head { margin-bottom: 18px; }
   .offers-kicker { font-size: 1.7rem; }
-  .offers-title { font-size: 3.1rem; gap: 6px; }
+  .offers-title { font-size: 2.6rem; gap: 6px; }
   .offers-spark { width: 30px; height: 30px; }
   /* no celular: 2 por linha, mesmo tamanho */
   .offers-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
@@ -1205,7 +1212,7 @@ body.no-scroll { overflow: hidden; }
 @media (max-width: 380px) {
   .hero-copy h1 { font-size: 2.05rem; }
   .offer-card { padding: 10px 10px; }
-  .offers-title { font-size: 2.7rem; }
+  .offers-title { font-size: 2.25rem; }
 }
 
 /* celular: produtos em 2 colunas, cards compactos — cabem 4 na tela */
