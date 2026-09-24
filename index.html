@@ -41,6 +41,10 @@
     </nav>
 
     <div class="header-actions">
+      <button class="cart-btn" id="cartBtn" type="button" aria-label="Abrir carrinho" aria-controls="cartDrawer" aria-expanded="false">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8Z"/><path d="M9 10V6.5a3 3 0 0 1 6 0V10"/></svg>
+        <span class="cart-count" id="cartCount" hidden>0</span>
+      </button>
       <a class="wa-icon-btn" id="headerWaBtn" href="#" target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
         <svg viewBox="0 0 32 32" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M16.02 3C9.4 3 4 8.36 4 14.96c0 2.2.6 4.27 1.66 6.05L4 29l8.2-2.15a12.9 12.9 0 0 0 3.82.58h.01c6.62 0 12.02-5.36 12.02-11.96C28.05 8.36 22.65 3 16.02 3Zm0 21.86h-.01a10.6 10.6 0 0 1-5.4-1.48l-.39-.23-3.87 1.01 1.03-3.76-.25-.39a9.83 9.83 0 0 1-1.53-5.05c0-5.46 4.46-9.9 9.94-9.9 2.66 0 5.15 1.03 7.03 2.9a9.83 9.83 0 0 1 2.9 6.99c0 5.46-4.46 9.91-9.45 9.91Zm5.45-7.42c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.6-.92-2.2-.24-.58-.49-.5-.67-.5-.17-.01-.37-.01-.57-.01-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.47 0 1.45 1.06 2.86 1.21 3.06.15.2 2.09 3.2 5.08 4.48.71.31 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2-1.41.25-.7.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35Z"/></svg>
       </a>
@@ -72,6 +76,47 @@
   </a>
 </aside>
 
+<!-- ===================== CARRINHO ===================== -->
+<div class="cart-overlay" id="cartOverlay" hidden></div>
+<aside class="cart-drawer" id="cartDrawer" role="dialog" aria-modal="true" aria-labelledby="cartTitle" hidden>
+  <div class="cart-head">
+    <div>
+      <p class="script-note">seu pedido</p>
+      <h2 id="cartTitle">Carrinho</h2>
+    </div>
+    <button class="ideas-close" id="cartClose" type="button" aria-label="Fechar carrinho">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+  </div>
+  <div class="cart-body" id="cartBody"><!-- gerado via JS --></div>
+  <div class="cart-foot" id="cartFoot" hidden>
+    <label class="cart-note">
+      <span>Detalhes da personalização <small>(opcional)</small></span>
+      <textarea id="cartNote" rows="3" placeholder="Nomes, cores, frases, para quando você precisa…"></textarea>
+    </label>
+    <div class="cart-total">
+      <span>Total</span>
+      <strong id="cartTotal">R$ 0,00</strong>
+    </div>
+    <a class="btn btn-primary cart-send" id="cartSend" href="#" target="_blank" rel="noopener">
+      <svg viewBox="0 0 32 32" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M16.02 3C9.4 3 4 8.36 4 14.96c0 2.2.6 4.27 1.66 6.05L4 29l8.2-2.15a12.9 12.9 0 0 0 3.82.58h.01c6.62 0 12.02-5.36 12.02-11.96C28.05 8.36 22.65 3 16.02 3Z"/></svg>
+      Finalizar pedido pelo WhatsApp
+    </a>
+    <button class="cart-clear" id="cartClear" type="button">Esvaziar carrinho</button>
+  </div>
+</aside>
+
+<!-- barra do carrinho no celular (aparece quando há itens) -->
+<button class="cart-bar" id="cartBar" type="button" hidden>
+  <span class="cart-bar-count" id="cartBarCount"></span>
+  <strong class="cart-bar-total" id="cartBarTotal"></strong>
+  <span class="cart-bar-go">Ver carrinho
+    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+  </span>
+</button>
+
+<div class="cart-toast" id="cartToast" role="status" aria-live="polite"></div>
+
 <!-- ===================== PRODUTO ABERTO PELO LINK (?produto=CAD01) ===================== -->
 <dialog class="lightbox" id="productViewer" aria-labelledby="productViewerTitle">
   <div class="lightbox-inner">
@@ -90,8 +135,8 @@
         <p class="lightbox-price" id="productViewerPrice"></p>
       </div>
       <div class="lightbox-actions">
-        <a class="btn btn-primary" id="productViewerCta" href="#" target="_blank" rel="noopener">Pedir pelo WhatsApp</a>
-        <button class="btn btn-outline" id="productViewerAll" type="button">Ver todos os produtos</button>
+        <div class="buy-row viewer-buy" id="viewerBuy"><!-- gerado via JS --></div>
+        <a class="viewer-wa" id="productViewerCta" href="#" target="_blank" rel="noopener">ou pedir só este pelo WhatsApp</a>
       </div>
     </div>
   </div>
@@ -106,7 +151,6 @@
         Feito à mão, pensado para você
       </p>
       <h1>Transforme momentos em presentes especiais.</h1>
-      <p class="hero-lede">Encontre o presente perfeito para cada momento, feito com carinho e pensado para surpreender.</p>
       <a href="#" class="btn btn-primary wa-cta hero-cta" data-wa-msg="Olá! Vim pelo site e quero fazer um pedido personalizado. Pode me ajudar?">
         <svg viewBox="0 0 32 32" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M16.02 3C9.4 3 4 8.36 4 14.96c0 2.2.6 4.27 1.66 6.05L4 29l8.2-2.15a12.9 12.9 0 0 0 3.82.58h.01c6.62 0 12.02-5.36 12.02-11.96C28.05 8.36 22.65 3 16.02 3Zm0 21.86h-.01a10.6 10.6 0 0 1-5.4-1.48l-.39-.23-3.87 1.01 1.03-3.76-.25-.39a9.83 9.83 0 0 1-1.53-5.05c0-5.46 4.46-9.9 9.94-9.9 2.66 0 5.15 1.03 7.03 2.9a9.83 9.83 0 0 1 2.9 6.99c0 5.46-4.46 9.91-9.45 9.91Z"/></svg>
         Falar no WhatsApp
@@ -134,7 +178,6 @@
   <div class="section-inner">
     <div class="products-heading">
       <h2>Nossos produtos</h2>
-      <p>Cada peça é preparada especialmente para o seu pedido.</p>
       <a class="inspire-link" href="galeria.html">
         <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 9"/></svg>
         Se inspire nessas ideias
@@ -193,52 +236,7 @@
         <h3>Aprovamos com você</h3>
         <p>Enviamos uma prévia antes de colocar a mão na massa.</p>
       </li>
-      <li class="step">
-        <span class="step-number">4</span>
-        <h3>Receba em casa</h3>
-        <p>Produzimos com carinho e enviamos até a sua porta.</p>
-      </li>
     </ol>
-  </div>
-</section>
-
-<!-- ===================== KITS ===================== -->
-<section class="kits" id="kits">
-  <div class="section-inner">
-    <div class="kits-card">
-      <div class="kits-copy">
-        <p class="script-note">para presentear com ainda mais carinho</p>
-        <h2>Kits e presentes</h2>
-        <p>Combine peças personalizadas em kits prontos para presentear — aniversário, dia das mães, formatura ou só porque sim.</p>
-        <a href="#" class="btn btn-outline wa-cta" data-wa-msg="Olá! Gostaria de montar um kit de presente personalizado. Pode me ajudar a escolher?">Montar meu kit pelo WhatsApp</a>
-      </div>
-      <div class="kits-visual" aria-hidden="true">
-        <span class="icon-frame frame-kit"><svg viewBox="0 0 140 140" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="18" y="46" width="104" height="76" rx="8"/><path d="M18 70h104"/><path d="M58 46v76M82 46v76" opacity="0.5"/><path d="M40 46c0-14 10-24 30-24s30 10 30 24" /><circle cx="70" cy="18" r="6" fill="currentColor" stroke="none"/></svg></span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== SOBRE ===================== -->
-<section class="about" id="sobre">
-  <div class="section-inner about-inner">
-    <div class="about-visual" aria-hidden="true">
-      <span class="icon-frame frame-heart"><svg viewBox="0 0 140 140" width="100%" height="100%" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M70 118S22 90 22 54a26 26 0 0 1 48-14 26 26 0 0 1 48 14c0 36-48 64-48 64Z"/><path d="M52 56c4-6 12-6 16 0" opacity="0.5"/></svg></span>
-    </div>
-    <div class="about-copy">
-      <h2>Presentes para pessoa que você ama</h2>
-      <p>A Lets Mimos nasceu da vontade de transformar presentes simples em lembranças cheias de significado. Cada peça é pensada, escolhida e preparada uma a uma — sem pressa, sem produção em massa. Se você chegou até aqui, já faz parte dessa história.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ===================== DEPOIMENTOS ===================== -->
-<section class="testimonials" id="depoimentos">
-  <div class="section-inner">
-    <h2>Quem já ganhou um mimo</h2>
-    <div class="testimonial-track" id="testimonialTrack">
-      <!-- gerado via JS -->
-    </div>
   </div>
 </section>
 
