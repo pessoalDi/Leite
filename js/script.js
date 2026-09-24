@@ -265,10 +265,9 @@ function renderIdeaBanner() {
     banner.innerHTML = "";
     return;
   }
-  const n = countForIdea(activeIdea);
   banner.hidden = false;
   banner.innerHTML = `
-    <p>Ideias para <strong>${esc(activeIdea.label)}</strong> · ${n} ${n === 1 ? "mimo" : "mimos"}</p>
+    <p>Ideias para <strong>${esc(activeIdea.label)}</strong></p>
     <button class="idea-clear" type="button">Ver todos os produtos</button>`;
   banner.querySelector(".idea-clear").addEventListener("click", () => setActiveIdea(null, { scroll: false }));
 }
@@ -280,16 +279,14 @@ function renderIdeaViews() {
     box.innerHTML = "";
     return;
   }
-  const nKits = kitsForIdea(activeIdea).length;
-  const nProd = PRODUCTS.filter((p) => matchesIdea(p, activeIdea)).length;
   box.hidden = false;
   box.innerHTML = `
     <button type="button" class="idea-view-btn${activeIdeaView === "produtos" ? " active" : ""}" data-view="produtos" aria-pressed="${activeIdeaView === "produtos"}">
-      Todos os produtos <span class="idea-view-count">${nProd}</span>
+      Todos os produtos
     </button>
     <button type="button" class="idea-view-btn${activeIdeaView === "kits" ? " active" : ""}" data-view="kits" aria-pressed="${activeIdeaView === "kits"}">
       <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="13" rx="2"/><path d="M3 12h18M12 8v13"/><path d="M12 8c-2-3-6-4-6-1.5S10 8 12 8Zm0 0c2-3 6-4 6-1.5S14 8 12 8Z"/></svg>
-      Kits <span class="idea-view-count">${nKits}</span>
+      Kits
     </button>`;
   box.querySelectorAll(".idea-view-btn").forEach((b) =>
     b.addEventListener("click", () => {
@@ -313,7 +310,7 @@ function renderShelves() {
     return `
       <section class="shelf" aria-label="${esc(c.label)}">
         <div class="shelf-head">
-          <h3>${esc(c.label)} <span class="shelf-count">${items.length}</span></h3>
+          <h3>${esc(c.label)}</h3>
           <div class="shelf-actions">
             <button type="button" class="shelf-arrow" data-dir="-1" aria-label="Anteriores de ${esc(c.label)}">
               <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
@@ -628,20 +625,28 @@ function wireWaCtas() {
 }
 
 /* ---------------- gaveta de ideias ---------------- */
+// ícone de cada grupo, para o título se destacar dos nomes das ideias
+const ICON_ATTRS = 'viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"';
+const GROUP_ICONS = {
+  "Datas comemorativas": `<svg ${ICON_ATTRS}><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>`,
+  "Ocasiões e celebrações": `<svg ${ICON_ATTRS}><path d="M12 3l2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.8L12 3Z"/></svg>`,
+  "Para quem vai receber": `<svg ${ICON_ATTRS}><path d="M12 20S4 15 4 9.5A4.2 4.2 0 0 1 12 7.6a4.2 4.2 0 0 1 8 1.9C20 15 12 20 12 20Z"/></svg>`,
+  "Por estilo do mimo": `<svg ${ICON_ATTRS}><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M5.6 18.4l2.1-2.1M16.3 7.7l2.1-2.1"/></svg>`,
+  "Por faixa de preço": `<svg ${ICON_ATTRS}><path d="M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L3 13V3h10l7.6 7.6a2 2 0 0 1 0 2.8Z"/><circle cx="7.5" cy="7.5" r="1.5"/></svg>`
+};
 function renderIdeasList() {
   const list = document.getElementById("ideasList");
   list.innerHTML = IDEAS.map((g) => `
     <section class="ideas-group">
-      <h3>${esc(g.group)}</h3>
+      <h3 class="ideas-group-title">${GROUP_ICONS[g.group] || ""}<span>${esc(g.group)}</span></h3>
       <ul>
         ${g.items.map((i) => {
-          const n = countForIdea(i);
           const ativo = activeIdea && activeIdea.id === i.id;
           return `
           <li>
             <button type="button" class="idea-link${ativo ? " active" : ""}" data-idea="${esc(i.id)}"${ativo ? ' aria-current="true"' : ""}>
               <span>${esc(i.label)}${i.hint ? `<small>${esc(i.hint)}</small>` : ""}</span>
-              <span class="idea-count${n ? "" : " zero"}" aria-label="${n} produtos">${n}</span>
+              <svg class="idea-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
             </button>
           </li>`;
         }).join("")}

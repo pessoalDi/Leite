@@ -101,7 +101,7 @@ function renderTabs() {
   const all = [{ id: "todos", name: "Todos", n: PHOTOS.length },
     ...TYPES.map((t) => ({ ...t, n: PHOTOS.filter((p) => p.type === t.id).length }))];
   row.innerHTML = all
-    .map((t) => `<button class="filter-btn${t.id === activeType ? " active" : ""}" data-type="${esc(t.id)}" aria-pressed="${t.id === activeType}">${esc(t.name)} <span class="tab-count">${t.n}</span></button>`)
+    .map((t) => `<button class="filter-btn${t.id === activeType ? " active" : ""}" data-type="${esc(t.id)}" aria-pressed="${t.id === activeType}">${esc(t.name)}</button>`)
     .join("");
 }
 
@@ -159,7 +159,7 @@ function renderGallery() {
               <h2>${esc(t.name)}</h2>
               ${fromLine(t)}
             </div>
-            <button type="button" class="gallery-see-all" data-type="${esc(t.id)}">Ver só ${esc(t.name)} · ${list.length}</button>
+            <button type="button" class="gallery-see-all" data-type="${esc(t.id)}">Ver só ${esc(t.name)}</button>
           </div>
           <div class="gallery-grid">${list.map(photoTile).join("")}</div>
         </section>`;
