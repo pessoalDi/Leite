@@ -33,6 +33,9 @@
 }
 
 * { box-sizing: border-box; }
+
+/* garante que elementos com o atributo hidden fiquem escondidos mesmo com display definido na classe */
+[hidden] { display: none !important; }
 html { scroll-behavior: smooth; }
 
 body {
@@ -767,6 +770,156 @@ body.no-scroll { overflow: hidden; }
 .idea-empty p { margin: 0 auto 18px; }
 
 /* ============================================================
+   SE INSPIRE NESSAS IDEIAS — botão, link na gaveta e galeria
+   ============================================================ */
+.inspire-link {
+  display: inline-flex; align-items: center; gap: 10px;
+  margin-top: 18px;
+  padding: 11px 20px;
+  border-radius: 999px;
+  border: 1.5px solid var(--rose);
+  background: var(--white);
+  color: var(--rose-deep);
+  font-weight: 500;
+  font-size: 0.95rem;
+  box-shadow: var(--shadow-card);
+  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+.inspire-link:hover { background: var(--rose); color: var(--white); transform: translateY(-2px); }
+
+.ideas-gallery-link {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin: 0 16px calc(16px + env(safe-area-inset-bottom, 0px));
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: var(--rose);
+  color: var(--white);
+  font-weight: 500;
+}
+.ideas-gallery-link small { display: block; font-weight: 400; font-size: 0.8rem; opacity: 0.85; }
+.ideas-gallery-link:hover { background: var(--rose-deep); }
+
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 42px;
+  padding: 0 16px 0 10px;
+  border-radius: 999px;
+  border: 1.5px solid var(--rose-soft);
+  background: var(--white);
+  color: var(--rose-deep);
+  font-size: 0.92rem;
+  font-weight: 500;
+  box-shadow: var(--shadow-card);
+}
+.back-btn:hover { border-color: var(--rose); }
+
+.gallery-intro { padding: 56px 0 8px; text-align: center; }
+.gallery-intro p { margin: 0 auto; }
+.gallery-intro h1 { font-size: clamp(2rem, 4.4vw, 3rem); }
+
+.gallery { padding: 26px 0 40px; scroll-margin-top: 72px; }
+.tab-count { font-size: 0.78rem; opacity: 0.7; margin-left: 2px; }
+.gallery-loading { text-align: center; margin: 30px auto; }
+
+.gallery-group + .gallery-group { margin-top: 44px; }
+.gallery-group-head {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.gallery-group-head h2 { margin: 0; font-size: clamp(1.4rem, 2.6vw, 1.8rem); }
+.gallery-see-all {
+  border: none; background: none; cursor: pointer;
+  font: 500 0.9rem var(--font-body);
+  color: var(--rose-deep);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  padding: 4px 0;
+}
+
+/* mosaico: fotos em pé e deitadas se encaixam sem cortar */
+.gallery-grid { column-count: 3; column-gap: 18px; }
+.gallery-item {
+  position: relative;
+  display: block;
+  width: 100%;
+  margin: 0 0 18px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background: var(--cream-deep);
+  box-shadow: var(--shadow-card);
+  cursor: zoom-in;
+  break-inside: avoid;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.gallery-item:hover { transform: translateY(-3px); box-shadow: var(--shadow-soft); }
+.gallery-item img { width: 100%; height: auto; }
+.gallery-caption {
+  position: absolute; left: 10px; right: 10px; bottom: 10px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(255, 253, 251, 0.92);
+  color: var(--brown);
+  font-size: 0.82rem;
+  text-align: left;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  width: fit-content; max-width: calc(100% - 20px);
+}
+
+.lightbox {
+  width: min(920px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-lg);
+  background: var(--cream);
+  color: var(--brown);
+  overflow: hidden;
+}
+.lightbox::backdrop { background: rgba(74, 52, 42, 0.72); }
+.lightbox-inner { position: relative; display: flex; flex-direction: column; max-height: calc(100dvh - 32px); }
+.lightbox-close {
+  position: absolute; top: 12px; right: 12px; z-index: 2;
+  display: flex; align-items: center; justify-content: center;
+  width: 42px; height: 42px;
+  border: none; border-radius: 50%;
+  background: var(--white);
+  color: var(--brown);
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+}
+.lightbox-stage {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--cream-deep);
+}
+.lightbox-stage img {
+  max-width: 100%;
+  max-height: calc(100dvh - 190px);
+  object-fit: contain;
+}
+.lightbox-nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  display: flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px;
+  border: none; border-radius: 50%;
+  background: rgba(255, 253, 251, 0.94);
+  color: var(--brown);
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+}
+.lightbox-nav.prev { left: 12px; }
+.lightbox-nav.next { right: 12px; }
+.lightbox-info {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap;
+  padding: 16px 20px calc(16px + env(safe-area-inset-bottom, 0px));
+}
+.lightbox-caption { margin: 6px 0 0; color: var(--brown); font-size: 1rem; }
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 
@@ -791,6 +944,16 @@ body.no-scroll { overflow: hidden; }
   .header-left { gap: 10px; }
   .ideas-btn { width: 42px; padding: 0; justify-content: center; }
   .ideas-btn-label { display: none; }
+  .back-btn { width: 42px; padding: 0; justify-content: center; }
+  .back-btn-label { display: none; }
+  .gallery-intro { padding-top: 36px; }
+  .gallery-grid { column-count: 2; column-gap: 12px; }
+  .gallery-item { margin-bottom: 12px; }
+  .gallery-caption { font-size: 0.75rem; left: 6px; bottom: 6px; padding: 4px 10px; }
+  .lightbox { width: 100vw; max-width: 100vw; max-height: 100dvh; height: 100dvh; border-radius: 0; }
+  .lightbox-inner { height: 100%; max-height: 100dvh; }
+  .lightbox-stage img { max-height: calc(100dvh - 170px); }
+  .lightbox-info .btn { width: 100%; justify-content: center; }
   .brand-tagline { font-size: 0.66rem; }
 
   /* Hero: a mesma foto já usada no projeto, como fundo real da seção,
