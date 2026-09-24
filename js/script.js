@@ -235,14 +235,57 @@ function setActiveFilter(cat) {
   renderProducts();
 }
 
+// Entrar numa ideia cria um passo no histórico: o botão "voltar" do navegador
+// ou do celular desfaz o filtro em vez de sair do site.
 function setActiveIdea(ideaId, { scroll = true } = {}) {
-  activeIdea = ideaId ? findIdea(ideaId) || null : null;
-
-  // mantém o link compartilhável: site.com/?ideia=dia-das-maes-pais
+  const next = ideaId ? findIdea(ideaId) || null : null;
   const url = new URL(window.location.href);
-  if (activeIdea) url.searchParams.set("ideia", activeIdea.id);
+  url.hash = "";
+  if (next) url.searchParams.set("ideia", next.id);
   else url.searchParams.delete("ideia");
-  history.replaceState(null, "", url);
+
+  // lmPushed = este passo do histórico foi criado pelo site (o "voltar" continua no site)
+  const pushed = !!(history.state && history.state.lmPushed);
+  if (next && !activeIdea) {
+    history.pushState({ lmIdea: next.id, lmPushed: true }, "", url);
+  } else {
+    history.replaceState(next ? { lmIdea: next.id, lmPushed: pushed } : null, "", url);
+  }
+  applyIdea(next, { scroll });
+}
+
+// Sai da ideia. mode "top" = volta ao início da página; "products" = mostra todos os produtos.
+let pendingPopScroll = null;
+function clearIdea(mode = "top") {
+  if (!activeIdea) return scrollToMode(mode);
+  if (history.state && history.state.lmPushed) {
+    pendingPopScroll = mode;
+    history.back(); // o popstate abaixo tira o filtro
+  } else {
+    setActiveIdea(null, { scroll: false });
+    scrollToMode(mode);
+  }
+}
+
+function scrollToMode(mode) {
+  if (mode === "products") document.getElementById("produtos").scrollIntoView({ behavior: "smooth" });
+  else window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+window.addEventListener("popstate", () => {
+  const id = new URLSearchParams(window.location.search).get("ideia");
+  const next = id ? findIdea(id) || null : null;
+  if ((next && next.id) !== (activeIdea && activeIdea.id)) applyIdea(next, { scroll: false });
+  if (pendingPopScroll) {
+    const mode = pendingPopScroll;
+    pendingPopScroll = null;
+    // espera o navegador restaurar a rolagem e então vai para onde o cliente pediu
+    setTimeout(() => scrollToMode(mode), 60);
+  }
+});
+
+function applyIdea(next, { scroll = true } = {}) {
+  activeIdea = next;
 
   // dentro de uma ideia, os filtros de categoria somem: aparecem todos os produtos
   // da ideia e, ao lado, a opção "Kits".
@@ -267,9 +310,18 @@ function renderIdeaBanner() {
   }
   banner.hidden = false;
   banner.innerHTML = `
-    <p>Ideias para <strong>${esc(activeIdea.label)}</strong></p>
-    <button class="idea-clear" type="button">Ver todos os produtos</button>`;
-  banner.querySelector(".idea-clear").addEventListener("click", () => setActiveIdea(null, { scroll: false }));
+    <button class="idea-back" type="button" data-mode="top">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+      <span class="idea-back-full">Voltar ao início</span><span class="idea-back-short">Início</span>
+    </button>
+    <p class="idea-banner-text">Você está vendo <strong>${esc(activeIdea.label)}</strong></p>
+    <button class="idea-clear" type="button" data-mode="products" aria-label="Sair desta ideia e ver todos os produtos">
+      <span class="idea-clear-text">Ver todos os produtos</span>
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>`;
+  banner.querySelectorAll("[data-mode]").forEach((b) =>
+    b.addEventListener("click", () => clearIdea(b.dataset.mode))
+  );
 }
 
 function renderIdeaViews() {
@@ -624,6 +676,23 @@ function wireWaCtas() {
   });
 }
 
+/* ---------------- navegação: logo, Início e Produtos saem da ideia ---------------- */
+function wireHomeLinks() {
+  document.querySelectorAll('a.brand, a[href="#topo"], a[href="#produtos"]').forEach((a) => {
+    a.addEventListener("click", (e) => {
+      if (!activeIdea) return; // sem ideia ativa, o link funciona normalmente
+      e.preventDefault();
+      clearIdea(a.getAttribute("href") === "#produtos" ? "products" : "top");
+    });
+  });
+}
+
+// altura do cabeçalho fixo, para a faixa da ideia grudar logo abaixo dele
+function syncHeaderHeight() {
+  const h = document.querySelector(".site-header");
+  if (h) document.documentElement.style.setProperty("--header-h", `${h.offsetHeight}px`);
+}
+
 /* ---------------- ofertas do Hero ---------------- */
 // Os ícones disponíveis são os mesmos da Gerência (aba Ofertas).
 const OFFER_ICONS = {
@@ -800,6 +869,9 @@ function wireNavToggle() {
 document.addEventListener("DOMContentLoaded", async () => {
   renderTestimonials();
   wireWaCtas();
+  wireHomeLinks();
+  syncHeaderHeight();
+  window.addEventListener("resize", syncHeaderHeight);
   renderOffers();
   wireOffers();
   loadOffers().then(renderOffers);
@@ -818,7 +890,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // link direto para uma ideia: site.com/?ideia=dia-das-maes-pais
     const ideiaDoLink = new URLSearchParams(window.location.search).get("ideia");
-    if (ideiaDoLink && findIdea(ideiaDoLink)) setActiveIdea(ideiaDoLink);
+    if (ideiaDoLink && findIdea(ideiaDoLink)) {
+      // chegou por link direto: não há passo anterior no site, então não marca lmPushed
+      history.replaceState({ lmIdea: ideiaDoLink }, "");
+      applyIdea(findIdea(ideiaDoLink));
+    }
 
     // link da foto enviado pelo WhatsApp: site.com/?produto=CAD01
     const produtoDoLink = new URLSearchParams(window.location.search).get("produto");

@@ -795,25 +795,57 @@ p { margin: 0 0 1em; max-width: 62ch; color: var(--brown-soft); }
 body.no-scroll { overflow: hidden; }
 
 /* faixa que aparece acima dos produtos quando uma ideia está ativa */
+/* fica "grudada" logo abaixo do cabeçalho enquanto o cliente rola os produtos da ideia */
 .idea-banner {
-  display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;
-  max-width: 760px;
+  position: sticky;
+  top: calc(var(--header-h, 86px) + 10px);
+  z-index: 40;
+  display: flex; align-items: center; gap: 14px;
+  max-width: 860px;
   margin: 0 auto 22px;
-  padding: 14px 16px 14px 20px;
-  background: var(--white);
+  padding: 8px 8px 8px 8px;
+  background: rgba(255, 253, 251, 0.96);
+  backdrop-filter: blur(8px);
   border: 1.5px solid var(--rose-soft);
-  border-radius: var(--radius-md);
+  border-radius: 999px;
+  box-shadow: var(--shadow-card);
 }
-.idea-banner p { margin: 0; color: var(--brown); }
-.idea-banner strong { color: var(--rose-deep); font-weight: 500; }
-.idea-banner .idea-clear {
-  border: none; background: none; cursor: pointer;
-  font: 500 0.9rem var(--font-body);
+.idea-back {
+  display: inline-flex; align-items: center; gap: 8px;
+  flex-shrink: 0;
+  padding: 10px 18px 10px 14px;
+  border: none;
+  border-radius: 999px;
+  background: var(--rose);
+  color: var(--white);
+  font: 500 0.92rem var(--font-body);
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+.idea-back:hover { background: var(--rose-deep); transform: translateX(-2px); }
+.idea-back-short { display: none; }
+.idea-banner-text {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  color: var(--brown-soft);
+  font-size: 0.95rem;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.idea-banner-text strong { color: var(--rose-deep); font-weight: 500; }
+.idea-clear {
+  display: inline-flex; align-items: center; gap: 6px;
+  flex-shrink: 0;
+  padding: 9px 14px;
+  border: 1px solid var(--nude);
+  border-radius: 999px;
+  background: var(--white);
   color: var(--rose-deep);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  padding: 6px 4px;
+  font: 500 0.86rem var(--font-body);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background 0.2s ease;
 }
+.idea-clear:hover { border-color: var(--rose); background: #F8E6E1; }
 
 .idea-empty {
   grid-column: 1 / -1;
@@ -1247,6 +1279,12 @@ body.no-scroll { overflow: hidden; }
 
   .product-btn { padding: 9px 10px; font-size: 0.84rem; gap: 6px; }
   .product-btn .label-full { display: none; }
+  .idea-banner { gap: 8px; padding: 6px; margin-bottom: 16px; }
+  .idea-back { padding: 9px 14px 9px 11px; font-size: 0.86rem; }
+  .idea-back-full, .idea-clear-text { display: none; }
+  .idea-back-short { display: inline; }
+  .idea-banner-text { font-size: 0.85rem; }
+  .idea-clear { padding: 9px; }
   .shelf + .shelf { margin-top: 28px; }
   .shelf-head { margin-bottom: 10px; padding-bottom: 8px; }
   .shelf-arrow { display: none; }
