@@ -267,15 +267,17 @@ function renderProducts() {
     .map((p) => {
       const message = productMessage(p);
       return `
-      <article class="product-card">
-        <div class="product-photo${p.photo ? "" : " icon-frame"}">${productPhotoHtml(p)}</div>
+      <article class="product-card" data-id="${esc(p.id)}">
+        <button type="button" class="product-photo${p.photo ? "" : " icon-frame"}" data-open="${esc(p.id)}" aria-label="Ver ${esc(p.name)} ampliado">${productPhotoHtml(p)}</button>
         <div class="product-body">
           <span class="product-cat-tag">${esc(categoryLabel(p.category))}</span>
           <h3>${esc(p.name)}</h3>
           ${p.desc ? `<p class="product-desc">${esc(p.desc)}</p>` : ""}
           <p class="product-price">${brl(p.price)}</p>
           <a class="product-btn" href="${waLink(message)}" target="_blank" rel="noopener">
-            Personalizar pelo WhatsApp
+            <svg class="product-btn-icon" viewBox="0 0 32 32" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M16.02 3C9.4 3 4 8.36 4 14.96c0 2.2.6 4.27 1.66 6.05L4 29l8.2-2.15a12.9 12.9 0 0 0 3.82.58h.01c6.62 0 12.02-5.36 12.02-11.96C28.05 8.36 22.65 3 16.02 3Z"/></svg>
+            <span class="label-full">Personalizar pelo WhatsApp</span>
+            <span class="label-short">Pedir</span>
           </a>
         </div>
       </article>`;
@@ -326,6 +328,12 @@ function openProduct(id) {
 }
 
 function wireProductViewer() {
+  // tocar na foto do card abre o produto ampliado (com descrição completa)
+  document.getElementById("productGrid").addEventListener("click", (e) => {
+    const photo = e.target.closest("[data-open]");
+    if (photo) openProduct(photo.dataset.open);
+  });
+
   const dlg = document.getElementById("productViewer");
   const close = () => { if (dlg.open) dlg.close(); };
   document.getElementById("productViewerClose").addEventListener("click", close);
