@@ -9,14 +9,30 @@ const WHATSAPP_NUMBER = "5592993264251";
 const SUPABASE_URL = "https://oxhemopmgqbxlwezdvfm.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im94aGVtb3BtZ3FieGx3ZXpkdmZtIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTAxOTI1MDIsImV4cCI6MjEwNTc2ODUwMn0.m8P-QdEkQo6uRmSwD28c0Uo3VIz5uSAMOpEQPG9oNzw";
 
-let TYPES = [];     // [{ id, name }]
-let PHOTOS = [];    // [{ id, type, caption, url }]
+let TYPES = [];     // [{ id, name, from }]  from = "a partir de" do tipo (ou null)
+let PHOTOS = [];    // [{ id, type, caption, url, price }]
 let activeType = "todos";
 let viewerList = [];  // fotos navegáveis no visualizador (as da aba atual)
 let viewerIndex = 0;
 
 const esc = (s) =>
   String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+const brl = (value) =>
+  Number(value).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+// valor da foto; se ela não tiver, usa o "a partir de" do tipo
+function priceInfo(p) {
+  if (p.price != null) return { value: p.price, from: false };
+  const t = TYPES.find((x) => x.id === p.type);
+  if (t && t.from != null) return { value: t.from, from: true };
+  return null;
+}
+
+function priceText(info) {
+  if (!info) return "";
+  return info.from ? `a partir de ${brl(info.value)}` : brl(info.value);
+}
 
 function waLink(message) {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
@@ -33,17 +49,36 @@ async function fetchTable(path) {
 
 async function loadGallery() {
   // o banco só devolve tipos e fotos marcados como visíveis
-  const [types, photos] = await Promise.all([
-    fetchTable("galeria_tipos?select=id,nome&order=posicao.asc,nome.asc"),
-    fetchTable("galeria_fotos?select=id,tipo,legenda,imagem_url&order=posicao.asc,criado_em.asc")
-  ]);
+  const typeOrder = "order=posicao.asc,nome.asc";
+  const photoOrder = "order=posicao.asc,criado_em.asc";
+  let types, photos;
+  try {
+    [types, photos] = await Promise.all([
+      fetchTable(`galeria_tipos?select=id,nome,preco&${typeOrder}`),
+      fetchTable(`galeria_fotos?select=id,tipo,legenda,imagem_url,preco&${photoOrder}`)
+    ]);
+  } catch (err) {
+    // banco ainda sem a coluna de preço (migração não rodada): mostra a galeria sem valores
+    [types, photos] = await Promise.all([
+      fetchTable(`galeria_tipos?select=id,nome&${typeOrder}`),
+      fetchTable(`galeria_fotos?select=id,tipo,legenda,imagem_url&${photoOrder}`)
+    ]);
+  }
   const visibleTypes = new Set(types.map((t) => t.id));
   PHOTOS = photos
     .filter((p) => visibleTypes.has(p.tipo))
-    .map((p) => ({ id: p.id, type: p.tipo, caption: p.legenda || "", url: p.imagem_url }));
+    .map((p) => ({
+      id: p.id,
+      type: p.tipo,
+      caption: p.legenda || "",
+      url: p.imagem_url,
+      price: p.preco != null ? Number(p.preco) : null
+    }));
   const used = new Set(PHOTOS.map((p) => p.type));
   // só mostra tipos que já têm foto
-  TYPES = types.filter((t) => used.has(t.id)).map((t) => ({ id: t.id, name: t.nome }));
+  TYPES = types
+    .filter((t) => used.has(t.id))
+    .map((t) => ({ id: t.id, name: t.nome, from: t.preco != null ? Number(t.preco) : null }));
 }
 
 const typeName = (id) => (TYPES.find((t) => t.id === id) || {}).name || "";
@@ -77,11 +112,18 @@ function setType(typeId, { updateUrl = true } = {}) {
 
 /* ---------------- grade de fotos ---------------- */
 function photoTile(p) {
+  // na grade só aparece o valor próprio da foto; o "a partir de" fica no título do tipo
+  const own = p.price != null ? brl(p.price) : "";
   return `
-    <button type="button" class="gallery-item" data-id="${esc(p.id)}" aria-label="Ver foto${p.caption ? `: ${esc(p.caption)}` : ""}">
+    <button type="button" class="gallery-item" data-id="${esc(p.id)}" aria-label="Ver foto${p.caption ? `: ${esc(p.caption)}` : ""}${own ? `, ${own}` : ""}">
       <img src="${esc(p.url)}" alt="${esc(p.caption || typeName(p.type))}" loading="lazy">
+      ${own ? `<span class="gallery-price">${own}</span>` : ""}
       ${p.caption ? `<span class="gallery-caption">${esc(p.caption)}</span>` : ""}
     </button>`;
+}
+
+function fromLine(t) {
+  return t.from != null ? `<p class="gallery-from">a partir de <strong>${brl(t.from)}</strong></p>` : "";
 }
 
 function renderGallery() {
@@ -105,7 +147,10 @@ function renderGallery() {
       return `
         <section class="gallery-group">
           <div class="gallery-group-head">
-            <h2>${esc(t.name)}</h2>
+            <div>
+              <h2>${esc(t.name)}</h2>
+              ${fromLine(t)}
+            </div>
             <button type="button" class="gallery-see-all" data-type="${esc(t.id)}">Ver só ${esc(t.name)} · ${list.length}</button>
           </div>
           <div class="gallery-grid">${list.map(photoTile).join("")}</div>
@@ -113,7 +158,10 @@ function renderGallery() {
     }).join("");
   } else {
     viewerList = PHOTOS.filter((p) => p.type === activeType);
-    box.innerHTML = `<div class="gallery-grid">${viewerList.map(photoTile).join("")}</div>`;
+    const t = TYPES.find((x) => x.id === activeType);
+    box.innerHTML = `
+      ${t && t.from != null ? `<div class="gallery-type-head">${fromLine(t)}</div>` : ""}
+      <div class="gallery-grid">${viewerList.map(photoTile).join("")}</div>`;
   }
 }
 
@@ -127,7 +175,12 @@ function showPhoto(index) {
   img.alt = p.caption || typeName(p.type);
   document.getElementById("lightboxType").textContent = typeName(p.type);
   document.getElementById("lightboxTitle").textContent = p.caption || `Ideia de ${typeName(p.type)}`;
-  const msg = `Olá! Vi na galeria de ideias um trabalho de ${typeName(p.type)}${p.caption ? ` ("${p.caption}")` : ""} e quero um parecido. Pode me ajudar?`;
+  const info = priceInfo(p);
+  const priceEl = document.getElementById("lightboxPrice");
+  priceEl.textContent = priceText(info);
+  priceEl.hidden = !info;
+  const valor = info ? `, ${info.from ? "que sai a partir de" : "no valor de"} ${brl(info.value)},` : "";
+  const msg = `Olá! Vi na galeria de ideias um trabalho de ${typeName(p.type)}${p.caption ? ` ("${p.caption}")` : ""}${valor} e quero um parecido. Pode me ajudar?`;
   document.getElementById("lightboxCta").href = waLink(msg);
   const multiple = viewerList.length > 1;
   document.getElementById("lightboxPrev").hidden = !multiple;
