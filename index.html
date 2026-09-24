@@ -72,6 +72,30 @@
   </a>
 </aside>
 
+<!-- ===================== PRODUTO ABERTO PELO LINK (?produto=CAD01) ===================== -->
+<dialog class="lightbox" id="productViewer" aria-labelledby="productViewerTitle">
+  <div class="lightbox-inner">
+    <button class="lightbox-close" id="productViewerClose" type="button" aria-label="Fechar">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    </button>
+    <div class="lightbox-stage">
+      <img id="productViewerImg" alt="">
+    </div>
+    <div class="lightbox-info">
+      <div>
+        <span class="product-cat-tag" id="productViewerCat"></span>
+        <p class="lightbox-caption"><strong id="productViewerTitle"></strong> <span class="lightbox-code" id="productViewerCode"></span></p>
+        <p class="lightbox-desc" id="productViewerDesc" hidden></p>
+        <p class="lightbox-price" id="productViewerPrice"></p>
+      </div>
+      <div class="lightbox-actions">
+        <a class="btn btn-primary" id="productViewerCta" href="#" target="_blank" rel="noopener">Pedir pelo WhatsApp</a>
+        <button class="btn btn-outline" id="productViewerAll" type="button">Ver todos os produtos</button>
+      </div>
+    </div>
+  </div>
+</dialog>
+
 <!-- ===================== HERO ===================== -->
 <section class="hero" id="hero">
   <div class="hero-inner">

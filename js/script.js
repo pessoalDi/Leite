@@ -265,7 +265,7 @@ function renderProducts() {
 
   grid.innerHTML = list
     .map((p) => {
-      const message = `Olá! Gostaria de comprar ${withArticle(p.name)} no valor de ${brl(p.price)}. Gostaria de saber mais detalhes.`;
+      const message = productMessage(p);
       return `
       <article class="product-card">
         <div class="product-photo${p.photo ? "" : " icon-frame"}">${productPhotoHtml(p)}</div>
@@ -283,9 +283,66 @@ function renderProducts() {
     .join("");
 }
 
-// Pequeno auxiliar para deixar a mensagem mais natural em português.
-function withArticle(name) {
-  return `a ${name}`;
+// Endereço da página atual (funciona no domínio da Vercel ou em qualquer outro).
+const SITE_BASE = window.location.origin + window.location.pathname.replace(/[^/]*$/, "");
+
+// Link que abre exatamente este produto, com a foto: site.com/?produto=CAD01
+function productLink(p) {
+  return `${SITE_BASE}?produto=${encodeURIComponent(p.id)}`;
+}
+
+// Mensagem do WhatsApp: nome, código, valor e o link da foto.
+// (O WhatsApp não deixa um site anexar a imagem; o link abre a foto certa.)
+function productMessage(p) {
+  return `Olá! Gostaria de comprar o produto *${p.name}* (cód. ${p.id}), no valor de ${brl(p.price)}.\n\nFoto: ${productLink(p)}\n\nPode me passar mais detalhes?`;
+}
+
+/* ---------------- abrir um produto pelo link (?produto=CAD01) ---------------- */
+function openProduct(id) {
+  const p = PRODUCTS.find((x) => x.id.toUpperCase() === String(id).toUpperCase());
+  if (!p) return false;
+  const dlg = document.getElementById("productViewer");
+  const img = document.getElementById("productViewerImg");
+  const stage = dlg.querySelector(".lightbox-stage");
+  if (p.photo) {
+    img.src = p.photo;
+    img.alt = p.name;
+    stage.hidden = false;
+  } else {
+    img.removeAttribute("src");
+    stage.hidden = true;
+  }
+  document.getElementById("productViewerCat").textContent = categoryLabel(p.category);
+  document.getElementById("productViewerTitle").textContent = p.name;
+  document.getElementById("productViewerCode").textContent = `cód. ${p.id}`;
+  document.getElementById("productViewerPrice").textContent = brl(p.price);
+  const desc = document.getElementById("productViewerDesc");
+  desc.textContent = p.desc;
+  desc.hidden = !p.desc;
+  document.getElementById("productViewerCta").href = waLink(productMessage(p));
+  if (!dlg.open) dlg.showModal();
+  document.body.classList.add("no-scroll");
+  return true;
+}
+
+function wireProductViewer() {
+  const dlg = document.getElementById("productViewer");
+  const close = () => { if (dlg.open) dlg.close(); };
+  document.getElementById("productViewerClose").addEventListener("click", close);
+  dlg.addEventListener("click", (e) => { if (e.target === dlg) close(); });
+  dlg.addEventListener("close", () => {
+    document.body.classList.remove("no-scroll");
+    // tira o ?produto= da barra de endereço ao fechar
+    const url = new URL(window.location.href);
+    if (url.searchParams.has("produto")) {
+      url.searchParams.delete("produto");
+      history.replaceState(null, "", url);
+    }
+  });
+  document.getElementById("productViewerAll").addEventListener("click", () => {
+    close();
+    document.getElementById("produtos").scrollIntoView({ behavior: "smooth" });
+  });
 }
 
 /* ---------------- render: favorites ---------------- */
@@ -294,7 +351,7 @@ function renderFavorites() {
   const favs = PRODUCTS.filter((p) => p.favorite);
   grid.innerHTML = favs
     .map((p) => {
-      const message = `Olá! Gostaria de comprar ${withArticle(p.name)} no valor de ${brl(p.price)}. Gostaria de saber mais detalhes.`;
+      const message = productMessage(p);
       return `
       <a class="fav-card" href="${waLink(message)}" target="_blank" rel="noopener">
         <div class="fav-photo${p.photo ? "" : " icon-frame"}">${productPhotoHtml(p)}</div>
@@ -418,6 +475,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   wireWaCtas();
   wireNavToggle();
   wireIdeas();
+  wireProductViewer();
   document.getElementById("year").textContent = new Date().getFullYear();
 
   try {
@@ -429,6 +487,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     // link direto para uma ideia: site.com/?ideia=dia-das-maes-pais
     const ideiaDoLink = new URLSearchParams(window.location.search).get("ideia");
     if (ideiaDoLink && findIdea(ideiaDoLink)) setActiveIdea(ideiaDoLink);
+
+    // link da foto enviado pelo WhatsApp: site.com/?produto=CAD01
+    const produtoDoLink = new URLSearchParams(window.location.search).get("produto");
+    if (produtoDoLink) openProduct(produtoDoLink);
   } catch (err) {
     console.error("Não foi possível carregar os produtos:", err);
     document.getElementById("productGrid").innerHTML =

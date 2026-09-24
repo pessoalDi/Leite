@@ -925,6 +925,11 @@ body.no-scroll { overflow: hidden; }
   color: var(--brown);
 }
 
+.lightbox-caption strong { font-weight: 500; }
+.lightbox-code { font-size: 0.8rem; color: var(--brown-soft); margin-left: 4px; }
+.lightbox-desc { margin: 4px 0 0; font-size: 0.9rem; }
+.lightbox-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
 /* valores na galeria */
 .gallery-price {
   position: absolute; top: 10px; right: 10px;
@@ -977,6 +982,7 @@ body.no-scroll { overflow: hidden; }
   .lightbox-inner { height: 100%; max-height: 100dvh; }
   .lightbox-stage img { max-height: calc(100dvh - 170px); }
   .lightbox-info .btn { width: 100%; justify-content: center; }
+  .lightbox-actions { width: 100%; }
   .brand-tagline { font-size: 0.66rem; }
 
   /* Hero: a mesma foto já usada no projeto, como fundo real da seção,
