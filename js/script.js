@@ -645,7 +645,7 @@ const OFFER_ICONS = {
 
 function offerIcon(key) {
   const paths = OFFER_ICONS[key] || OFFER_ICONS.presente;
-  return `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
+  return `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg>`;
 }
 
 // Usadas enquanto a Gerência ainda não tem a tabela de ofertas (ou se ela não carregar).
@@ -684,7 +684,7 @@ function renderOffers() {
         <span class="offer-name">${esc(o.name)}</span>
         ${o.detail ? `<span class="offer-detail">${esc(o.detail)}</span>` : ""}
       </span>
-      <svg class="offer-arrow" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>`;
+      <svg class="offer-arrow" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>`;
     // com ideia ligada: mostra os presentes daquela ideia; sem ideia: abre o WhatsApp
     if (o.idea && findIdea(o.idea)) {
       return `<a class="offer-card" href="?ideia=${esc(o.idea)}" data-offer-idea="${esc(o.idea)}">${inner}</a>`;
