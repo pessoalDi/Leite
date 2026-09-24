@@ -248,6 +248,7 @@ function setActiveIdea(ideaId, { scroll = true } = {}) {
   // da ideia e, ao lado, a opção "Kits".
   activeIdeaView = "produtos";
   document.getElementById("filterRow").hidden = !!activeIdea;
+  document.getElementById("filterLabel").hidden = !!activeIdea;
   if (activeIdea) setActiveFilter("todos");
   else renderProducts();
 
@@ -299,6 +300,69 @@ function renderIdeaViews() {
   );
 }
 
+/* ---------------- vitrines por categoria (estilo "navegue por categorias") ---------------- */
+const SHELF_LIMIT = 10; // quantos produtos aparecem na fileira antes do "Ver todos"
+
+function renderShelves() {
+  const grid = document.getElementById("productGrid");
+  grid.classList.add("shelves-mode");
+  grid.innerHTML = CATEGORIES.map((c) => {
+    const items = PRODUCTS.filter((p) => p.category === c.id);
+    if (!items.length) return "";
+    const shown = items.slice(0, SHELF_LIMIT);
+    return `
+      <section class="shelf" aria-label="${esc(c.label)}">
+        <div class="shelf-head">
+          <h3>${esc(c.label)} <span class="shelf-count">${items.length}</span></h3>
+          <div class="shelf-actions">
+            <button type="button" class="shelf-arrow" data-dir="-1" aria-label="Anteriores de ${esc(c.label)}">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+            </button>
+            <button type="button" class="shelf-arrow" data-dir="1" aria-label="Próximos de ${esc(c.label)}">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+            </button>
+            <button type="button" class="shelf-all" data-cat="${esc(c.id)}">Ver todos</button>
+          </div>
+        </div>
+        <div class="shelf-track">${shown.map(productCardHtml).join("")}</div>
+      </section>`;
+  }).join("");
+  updateShelfArrows();
+}
+
+// esconde a seta quando não há mais para onde deslizar
+function updateShelfArrows() {
+  document.querySelectorAll(".shelf").forEach((shelf) => {
+    const track = shelf.querySelector(".shelf-track");
+    const [prev, next] = shelf.querySelectorAll(".shelf-arrow");
+    const max = track.scrollWidth - track.clientWidth - 4;
+    prev.disabled = track.scrollLeft <= 4;
+    next.disabled = track.scrollLeft >= max;
+    shelf.classList.toggle("no-scroll-needed", max <= 0);
+  });
+}
+
+function wireShelves() {
+  const grid = document.getElementById("productGrid");
+  grid.addEventListener("click", (e) => {
+    const arrow = e.target.closest(".shelf-arrow");
+    if (arrow) {
+      const track = arrow.closest(".shelf").querySelector(".shelf-track");
+      track.scrollBy({ left: Number(arrow.dataset.dir) * track.clientWidth * 0.9, behavior: "smooth" });
+      return;
+    }
+    const all = e.target.closest(".shelf-all");
+    if (all) {
+      setActiveFilter(all.dataset.cat);
+      document.getElementById("produtos").scrollIntoView({ behavior: "smooth" });
+    }
+  });
+  grid.addEventListener("scroll", (e) => {
+    if (e.target.classList && e.target.classList.contains("shelf-track")) updateShelfArrows();
+  }, true);
+  window.addEventListener("resize", updateShelfArrows);
+}
+
 /* ---------------- render: kits ---------------- */
 function kitPhotoHtml(k) {
   if (k.photo) return `<img src="${esc(k.photo)}" alt="${esc(k.name)}" loading="lazy">`;
@@ -317,6 +381,7 @@ function kitSavings(k) {
 
 function renderKits() {
   const grid = document.getElementById("productGrid");
+  grid.classList.remove("shelves-mode");
   const list = kitsForIdea(activeIdea);
   if (!list.length) {
     const msg = `Olá! Queria montar um kit de presente para "${activeIdea.label}". Pode me ajudar?`;
@@ -405,12 +470,15 @@ function productPhotoHtml(p) {
 
 function renderProducts() {
   if (activeIdea && activeIdeaView === "kits") return renderKits();
+  // página inicial (sem ideia e em "Todos"): uma vitrine deslizante por categoria
+  if (!activeIdea && activeCategory === "todos" && CATEGORIES.length > 1) return renderShelves();
   const grid = document.getElementById("productGrid");
   const list = PRODUCTS.filter((p) =>
     (activeCategory === "todos" || p.category === activeCategory) && matchesIdea(p, activeIdea)
   );
 
   if (!list.length) {
+    grid.classList.remove("shelves-mode");
     const tema = activeIdea ? activeIdea.label : categoryLabel(activeCategory);
     const msg = `Olá! Estou procurando um presente na linha "${tema}". Vocês conseguem criar algo personalizado?`;
     grid.innerHTML = `
@@ -422,10 +490,13 @@ function renderProducts() {
     return;
   }
 
-  grid.innerHTML = list
-    .map((p) => {
-      const message = productMessage(p);
-      return `
+  grid.classList.remove("shelves-mode");
+  grid.innerHTML = list.map(productCardHtml).join("");
+}
+
+function productCardHtml(p) {
+  const message = productMessage(p);
+  return `
       <article class="product-card" data-id="${esc(p.id)}">
         <button type="button" class="product-photo${p.photo ? "" : " icon-frame"}" data-open="${esc(p.id)}" aria-label="Ver ${esc(p.name)} ampliado">${productPhotoHtml(p)}</button>
         <div class="product-body">
@@ -440,8 +511,6 @@ function renderProducts() {
           </a>
         </div>
       </article>`;
-    })
-    .join("");
 }
 
 // Endereço da página atual (funciona no domínio da Vercel ou em qualquer outro).
@@ -649,6 +718,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   wireNavToggle();
   wireIdeas();
   wireProductViewer();
+  wireShelves();
   document.getElementById("year").textContent = new Date().getFullYear();
 
   try {
