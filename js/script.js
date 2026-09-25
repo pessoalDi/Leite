@@ -33,7 +33,7 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
 // porque é com eles que cada produto é marcado.
 // Os grupos com "faixa" filtram pelo preço, sem precisar marcar.
 // ============================================================
-const IDEAS = [
+const DEFAULT_IDEAS = [
   {
     group: "Datas comemorativas",
     items: [
@@ -87,8 +87,28 @@ const IDEAS = [
   }
 ];
 
-const ALL_IDEAS = IDEAS.flatMap((g) => g.items);
+// As ideias vêm da Gerência (aba Ideias). Esta lista fixa só é usada se a
+// tabela ainda não existir no Supabase. As faixas de preço são sempre automáticas.
+const PRICE_GROUP = DEFAULT_IDEAS.find((g) => g.group === "Por faixa de preço");
+let IDEAS = DEFAULT_IDEAS;
+let ALL_IDEAS = IDEAS.flatMap((g) => g.items);
 const findIdea = (id) => ALL_IDEAS.find((i) => i.id === id);
+
+async function loadIdeas() {
+  try {
+    const rows = await fetchTable("ideias?select=id,nome,dica,grupo&order=posicao.asc,nome.asc");
+    const groups = [];
+    rows.forEach((r) => {
+      let g = groups.find((x) => x.group === r.grupo);
+      if (!g) { g = { group: r.grupo, items: [] }; groups.push(g); }
+      g.items.push({ id: r.id, label: r.nome, ...(r.dica ? { hint: r.dica } : {}) });
+    });
+    IDEAS = [...groups, PRICE_GROUP];
+  } catch (err) {
+    IDEAS = DEFAULT_IDEAS; // tabela ainda não criada: usa a lista fixa
+  }
+  ALL_IDEAS = IDEAS.flatMap((g) => g.items);
+}
 
 // Filtros ativos na vitrine
 let activeCategory = "todos";
@@ -117,7 +137,10 @@ async function loadCatalog() {
   // o banco já só devolve o que está marcado como ativo (regras do setup.sql)
   const campos = "id,nome,categoria,descricao,preco,favorito,imagem_url";
   const ordem = "order=posicao.asc,id.asc";
-  const cats = await fetchTable("categorias?select=id,nome&order=posicao.asc,nome.asc");
+  const [cats] = await Promise.all([
+    fetchTable("categorias?select=id,nome&order=posicao.asc,nome.asc"),
+    loadIdeas()
+  ]);
   let prods;
   try {
     prods = await fetchTable(`produtos?select=${campos},tags&${ordem}`);
@@ -1119,6 +1142,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   try {
     await loadCatalog();
     catalogReady = true;
+    renderOffers(); // agora que as ideias da Gerência carregaram
     loadCart();
     renderCart();
     renderFilters();
