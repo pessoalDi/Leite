@@ -2,289 +2,547 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lets Mimos — Personalizados com carinho</title>
-<meta name="description" content="Presentes personalizados feitos com carinho: garrafas, cadernos, canecas, chaveiros, ecobags e kits. Peça o seu pelo WhatsApp.">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#183328">
+<title>Gerência Leiticia</title>
+
+<link rel="icon" type="image/png" sizes="32x32" href="imagens/favicon-32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="imagens/favicon-180.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,500&family=Jost:wght@300;400;500;600&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 
-<link rel="icon" type="image/png" sizes="32x32" href="imagens/favicon-32.png?v=2">
-<link rel="apple-touch-icon" sizes="180x180" href="imagens/favicon-180.png?v=2">
-<meta name="theme-color" content="#183328">
-
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
 
-<a class="skip-link" href="#produtos">Ir para os produtos</a>
-
-<!-- ===================== HEADER ===================== -->
-<header class="site-header" id="topo">
-  <div class="header-inner">
-    <div class="header-left">
-      <button class="ideas-btn" id="ideasBtn" type="button" aria-label="Ideias de presente" aria-expanded="false" aria-controls="ideasDrawer">
-        <span class="ideas-dots" aria-hidden="true"><i></i><i></i></span>
-        <span class="ideas-btn-label">Ideias</span>
-      </button>
-      <a class="brand" href="#topo" aria-label="Lets Mimos — voltar ao início">
-        <img class="brand-logo" src="imagens/logo.png?v=2" alt="Lets Mimos" width="640" height="234">
-      </a>
-    </div>
-
-    <nav class="main-nav" id="mainNav">
-      <a href="#topo">Início</a>
-      <a href="#produtos">Produtos</a>
-      <a href="#sobre">Sobre nós</a>
-      <a href="#contato">Contato</a>
-    </nav>
-
-    <div class="header-actions">
-      <button class="cart-btn" id="cartBtn" type="button" aria-label="Abrir carrinho" aria-controls="cartDrawer" aria-expanded="false">
-        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 11.2a2 2 0 0 1-2 1.8H8.2a2 2 0 0 1-2-1.8L5 8Z"/><path d="M9 10V6.5a3 3 0 0 1 6 0V10"/></svg>
-        <span class="cart-count" id="cartCount" hidden>0</span>
-      </button>
-      <a class="wa-icon-btn" id="headerWaBtn" href="#" target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
-        <svg viewBox="0 0 32 32" width="22" height="22" fill="currentColor" aria-hidden="true"><path d="M16.02 3C9.4 3 4 8.36 4 14.96c0 2.2.6 4.27 1.66 6.05L4 29l8.2-2.15a12.9 12.9 0 0 0 3.82.58h.01c6.62 0 12.02-5.36 12.02-11.96C28.05 8.36 22.65 3 16.02 3Zm0 21.86h-.01a10.6 10.6 0 0 1-5.4-1.48l-.39-.23-3.87 1.01 1.03-3.76-.25-.39a9.83 9.83 0 0 1-1.53-5.05c0-5.46 4.46-9.9 9.94-9.9 2.66 0 5.15 1.03 7.03 2.9a9.83 9.83 0 0 1 2.9 6.99c0 5.46-4.46 9.91-9.45 9.91Zm5.45-7.42c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.77.97-.94 1.17-.17.2-.35.22-.65.07-.3-.15-1.25-.46-2.38-1.47-.88-.78-1.47-1.75-1.65-2.05-.17-.3-.02-.46.13-.6.13-.13.3-.35.45-.52.15-.17.2-.3.3-.5.1-.2.05-.37-.02-.52-.07-.15-.67-1.6-.92-2.2-.24-.58-.49-.5-.67-.5-.17-.01-.37-.01-.57-.01-.2 0-.52.07-.79.37-.27.3-1.04 1.02-1.04 2.47 0 1.45 1.06 2.86 1.21 3.06.15.2 2.09 3.2 5.08 4.48.71.31 1.26.49 1.69.62.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2-1.41.25-.7.25-1.29.17-1.41-.07-.13-.27-.2-.57-.35Z"/></svg>
-      </a>
-      <button class="nav-toggle" id="navToggle" aria-label="Abrir menu" aria-expanded="false" aria-controls="mainNav">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
+<!-- ===================== CARREGANDO / DIAGNÓSTICO =====================
+     Fica visível até o js/app.js assumir. Tem estilo próprio (inline) para
+     funcionar mesmo se o css/admin.css não carregar. -->
+<div id="telaCarregando" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;overflow-y:auto;padding:24px;background:#183328;color:#fff;font:15px/1.5 system-ui,-apple-system,'Segoe UI',sans-serif;z-index:9999">
+  <div style="max-width:460px;width:100%">
+    <p id="carregandoTexto" style="margin:0;font-size:1.1rem">Carregando a Gerência…</p>
+    <div id="carregandoErro" style="display:none;margin-top:14px;word-break:break-word;background:#fff;color:#1E2A24;border-radius:12px;padding:16px 18px"></div>
   </div>
-</header>
+</div>
+<script>
+  (function () {
+    var erros = [];
+    function mostrar(titulo, itens) {
+      var box = document.getElementById("carregandoErro");
+      var txt = document.getElementById("carregandoTexto");
+      if (!box) return;
+      txt.textContent = titulo;
+      box.style.display = "block";
+      box.innerHTML = "<ul style='margin:0;padding-left:18px'>" +
+        itens.map(function (i) { return "<li style='margin:4px 0'>" + i + "</li>"; }).join("") + "</ul>";
+    }
+    // arquivo que não carregou (404, CDN bloqueado...)
+    window.addEventListener("error", function (e) {
+      var alvo = e.target;
+      if (alvo && (alvo.src || alvo.href)) {
+        erros.push("Não carregou: <b>" + (alvo.getAttribute("src") || alvo.getAttribute("href")) + "</b>");
+      } else if (e.message) {
+        erros.push("Erro no script: " + e.message);
+      }
+    }, true);
+    window.__mostrarErroGerencia = mostrar;
+    // se em 8s o app não assumiu, mostra o diagnóstico
+    setTimeout(function () {
+      var tela = document.getElementById("telaCarregando");
+      if (!tela || tela.hidden) return;
+      var dicas = erros.filter(function (v, i, a) { return a.indexOf(v) === i && v.indexOf("fonts.googleapis") < 0; });
+      if (!window.CONFIG) dicas.push("O arquivo <b>js/config.js</b> não foi encontrado. Confira se as pastas <b>js</b>, <b>css</b> e <b>imagens</b> estão na raiz do repositório, junto com o index.html.");
+      if (!window.supabase) dicas.push("A biblioteca do Supabase não carregou (cdn.jsdelivr.net). Teste em outra rede ou desative bloqueadores de anúncio.");
+      if (!dicas.length) dicas.push("O painel demorou para responder. Recarregue a página; se continuar, aperte F12 → Console e mande um print.");
+      mostrar("A Gerência não abriu", dicas);
+    }, 8000);
+  })();
+</script>
 
-<!-- ===================== IDEIAS DE PRESENTE (gaveta) ===================== -->
-<div class="ideas-overlay" id="ideasOverlay" hidden></div>
-<aside class="ideas-drawer" id="ideasDrawer" role="dialog" aria-modal="true" aria-labelledby="ideasTitle" hidden>
-  <div class="ideas-head">
-    <div>
-      <p class="script-note">para inspirar</p>
-      <h2 id="ideasTitle">Ideias de presente</h2>
-    </div>
-    <button class="ideas-close" id="ideasClose" type="button" aria-label="Fechar ideias">
-      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
-    </button>
+<!-- ===================== AVISO DE CONFIGURAÇÃO ===================== -->
+<section class="screen screen-center" id="telaConfig" hidden>
+  <div class="panel narrow">
+    <h1>Falta configurar</h1>
+    <p>Abra <code>js/config.js</code> e preencha <code>SUPABASE_URL</code> e <code>SUPABASE_ANON_KEY</code> com os dados do seu projeto (Supabase → Project Settings → API).</p>
   </div>
-  <nav class="ideas-body" id="ideasList" aria-label="Ideias de presente">
-    <!-- gerado via JS -->
-  </nav>
-  <a class="ideas-gallery-link" href="galeria.html">
-    <span>Ver trabalhos já feitos<small>Se inspire nessas ideias</small></span>
-    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-  </a>
-</aside>
+</section>
 
-<!-- ===================== CARRINHO ===================== -->
-<div class="cart-overlay" id="cartOverlay" hidden></div>
-<aside class="cart-drawer" id="cartDrawer" role="dialog" aria-modal="true" aria-labelledby="cartTitle" hidden>
-  <div class="cart-head">
-    <div>
-      <p class="script-note">seu pedido</p>
-      <h2 id="cartTitle">Carrinho</h2>
-    </div>
-    <button class="ideas-close" id="cartClose" type="button" aria-label="Fechar carrinho">
-      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
-    </button>
-  </div>
-  <div class="cart-body" id="cartBody"><!-- gerado via JS --></div>
-  <div class="cart-foot" id="cartFoot" hidden>
-    <label class="cart-note">
-      <span>Detalhes da personalização <small>(opcional)</small></span>
-      <textarea id="cartNote" rows="3" placeholder="Nomes, cores, frases, para quando você precisa…"></textarea>
+<!-- ===================== LOGIN ===================== -->
+<section class="screen screen-center" id="telaLogin" hidden>
+  <form class="panel narrow login" id="formLogin" novalidate>
+    <img src="imagens/logo-claro.png" alt="Lets Mimos" class="login-logo" width="640" height="234">
+    <h1>Gerência Leiticia</h1>
+    <label class="field">
+      <span>E-mail</span>
+      <input type="email" name="email" autocomplete="username" required>
     </label>
-    <div class="cart-total">
-      <span>Total</span>
-      <strong id="cartTotal">R$ 0,00</strong>
-    </div>
-    <a class="btn btn-primary cart-send" id="cartSend" href="#" target="_blank" rel="noopener">
-      <svg viewBox="0 0 32 32" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M16.02 3C9.4 3 4 8.36 4 14.96c0 2.2.6 4.27 1.66 6.05L4 29l8.2-2.15a12.9 12.9 0 0 0 3.82.58h.01c6.62 0 12.02-5.36 12.02-11.96C28.05 8.36 22.65 3 16.02 3Z"/></svg>
-      Finalizar pedido pelo WhatsApp
-    </a>
-    <button class="cart-clear" id="cartClear" type="button">Esvaziar carrinho</button>
-  </div>
-</aside>
+    <label class="field">
+      <span>Senha</span>
+      <input type="password" name="senha" autocomplete="current-password" required>
+    </label>
+    <p class="form-error" id="loginErro" role="alert"></p>
+    <button class="btn btn-primary btn-block" type="submit">Entrar</button>
+  </form>
+</section>
 
-<!-- barra do carrinho no celular (aparece quando há itens) -->
-<button class="cart-bar" id="cartBar" type="button" hidden>
-  <span class="cart-bar-count" id="cartBarCount"></span>
-  <strong class="cart-bar-total" id="cartBarTotal"></strong>
-  <span class="cart-bar-go">Ver carrinho
-    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-  </span>
-</button>
-
-<div class="cart-toast" id="cartToast" role="status" aria-live="polite"></div>
-
-<!-- ===================== PRODUTO ABERTO PELO LINK (?produto=CAD01) ===================== -->
-<dialog class="lightbox" id="productViewer" aria-labelledby="productViewerTitle">
-  <div class="lightbox-inner">
-    <button class="lightbox-close" id="productViewerClose" type="button" aria-label="Fechar">
-      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
-    </button>
-    <div class="lightbox-stage">
-      <img id="productViewerImg" alt="">
-    </div>
-    <div class="lightbox-info">
-      <div>
-        <span class="product-cat-tag" id="productViewerCat"></span>
-        <p class="lightbox-caption"><strong id="productViewerTitle"></strong> <span class="lightbox-code" id="productViewerCode"></span></p>
-        <p class="lightbox-desc" id="productViewerDesc" hidden></p>
-        <ul class="kit-viewer-items" id="productViewerItems" hidden></ul>
-        <p class="lightbox-price" id="productViewerPrice"></p>
+<!-- ===================== APP ===================== -->
+<div class="screen" id="telaApp" hidden>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="topbar-brand">
+        <img src="imagens/logo-claro.png" alt="Lets Mimos" width="640" height="234">
+        <span>Gerência Leiticia</span>
       </div>
-      <div class="lightbox-actions">
-        <div class="buy-row viewer-buy" id="viewerBuy"><!-- gerado via JS --></div>
-        <a class="viewer-wa" id="productViewerCta" href="#" target="_blank" rel="noopener">ou pedir só este pelo WhatsApp</a>
+      <nav class="tabs" aria-label="Seções">
+        <button class="tab active" data-view="produtos">Produtos</button>
+        <button class="tab" data-view="categorias">Categorias</button>
+        <button class="tab" data-view="ideias">Ideias</button>
+        <button class="tab" data-view="ofertas">Ofertas</button>
+        <button class="tab" data-view="kits">Kits</button>
+        <button class="tab" data-view="galeria">Galeria</button>
+        <button class="tab" data-view="importar">Importar planilha</button>
+      </nav>
+      <div class="topbar-actions">
+        <a class="link-light" id="linkSite" href="#" target="_blank" rel="noopener">Ver site</a>
+        <button class="link-light" id="btnSair" type="button">Sair</button>
       </div>
     </div>
-  </div>
+  </header>
+
+  <main class="main">
+
+    <!-- ---------- PRODUTOS ---------- -->
+    <section class="view" id="viewProdutos">
+      <div class="view-head">
+        <div>
+          <h2>Produtos</h2>
+          <p class="muted" id="resumoProdutos"></p>
+        </div>
+        <button class="btn btn-primary" id="btnNovoProduto" type="button">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          Novo produto
+        </button>
+      </div>
+
+      <div class="toolbar">
+        <div class="toolbar-row">
+          <input class="search" id="busca" type="search" placeholder="Buscar por nome ou código" aria-label="Buscar produto">
+          <select id="filtroIdeia" class="idea-filter" aria-label="Filtrar por ideia de presente"></select>
+        </div>
+        <div class="chips" id="chipsCategorias" role="group" aria-label="Filtrar por categoria"></div>
+      </div>
+
+      <p class="hint">Arraste pela alça <span class="grip-inline" aria-hidden="true">⋮⋮</span> para mudar a ordem no site. O preço salva ao sair do campo.</p>
+
+      <ul class="product-list" id="listaProdutos"></ul>
+      <div class="empty" id="vazioProdutos" hidden></div>
+    </section>
+
+    <!-- ---------- CATEGORIAS ---------- -->
+    <section class="view" id="viewCategorias" hidden>
+      <div class="view-head">
+        <div>
+          <h2>Categorias</h2>
+          <p class="muted">A ordem aqui é a ordem dos filtros no site.</p>
+        </div>
+      </div>
+
+      <form class="add-row" id="formCategoria">
+        <input type="text" name="nome" placeholder="Nome da nova categoria (ex.: Canecas)" required aria-label="Nome da nova categoria">
+        <button class="btn btn-primary" type="submit">Adicionar</button>
+      </form>
+
+      <ul class="cat-list" id="listaCategorias"></ul>
+    </section>
+
+    <!-- ---------- IDEIAS DE PRESENTE ---------- -->
+    <section class="view" id="viewIdeias" hidden>
+      <div class="view-head">
+        <div>
+          <h2>Ideias de presente</h2>
+          <p class="muted" id="resumoIdeias">As ideias da gaveta “Ideias” do site. As faixas de preço (até R$ 30…) são automáticas e não aparecem aqui.</p>
+        </div>
+      </div>
+
+      <form class="panel ideia-nova" id="formIdeia" novalidate>
+        <h3 class="ideia-nova-titulo">Nova ideia</h3>
+        <div class="ideia-nova-campos">
+          <label class="field">
+            <span>Nome</span>
+            <input type="text" name="nome" placeholder="Ex.: Dia dos Avós" maxlength="70" required>
+          </label>
+          <label class="field">
+            <span>Grupo</span>
+            <select name="grupo" id="ideiaGrupo"></select>
+          </label>
+          <label class="field" id="ideiaGrupoNovoCampo" hidden>
+            <span>Nome do novo grupo</span>
+            <input type="text" name="grupoNovo" placeholder="Ex.: Por estação do ano" maxlength="40">
+          </label>
+          <label class="field">
+            <span>Detalhe <small class="muted">(opcional)</small></span>
+            <input type="text" name="dica" placeholder="Ex.: Lembrancinhas e brindes" maxlength="60">
+          </label>
+        </div>
+        <p class="form-error" id="ideiaErro" role="alert"></p>
+        <button class="btn btn-primary" type="submit"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg> Criar ideia</button>
+      </form>
+
+      <p class="hint">Arraste pela alça <span class="grip-inline" aria-hidden="true">⋮⋮</span> para mudar a ordem dentro do grupo. Nome e detalhe salvam ao sair do campo. Use as setas do grupo para mudar a ordem dos grupos.</p>
+
+      <div id="listaIdeias"></div>
+      <div class="empty" id="vazioIdeias" hidden></div>
+    </section>
+
+    <!-- ---------- OFERTAS (topo do site) ---------- -->
+    <section class="view" id="viewOfertas" hidden>
+      <div class="view-head">
+        <div>
+          <h2>Ofertas</h2>
+          <p class="muted" id="resumoOfertas">Cards que aparecem no topo do site, ao lado do título.</p>
+        </div>
+        <button class="btn btn-primary" id="btnNovaOferta" type="button">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          Nova oferta
+        </button>
+      </div>
+
+      <p class="hint">Arraste pela alça <span class="grip-inline" aria-hidden="true">⋮⋮</span> para mudar a ordem. No computador ficam 2 por linha; o ideal é deixar entre 4 e 8 visíveis.</p>
+
+      <ul class="product-list" id="listaOfertas"></ul>
+      <div class="empty" id="vazioOfertas" hidden></div>
+    </section>
+
+    <!-- ---------- KITS ---------- -->
+    <section class="view" id="viewKits" hidden>
+      <div class="view-head">
+        <div>
+          <h2>Kits</h2>
+          <p class="muted" id="resumoKits">Kits prontos que aparecem dentro de cada ideia de presente no site.</p>
+        </div>
+        <button class="btn btn-primary" id="btnNovoKit" type="button">
+          <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+          Novo kit
+        </button>
+      </div>
+
+      <div class="toolbar">
+        <div class="toolbar-row">
+          <select id="filtroKitIdeia" class="idea-filter" aria-label="Filtrar kits por ideia"></select>
+        </div>
+      </div>
+
+      <p class="hint">Arraste pela alça <span class="grip-inline" aria-hidden="true">⋮⋮</span> para mudar a ordem. O preço salva ao sair do campo.</p>
+
+      <ul class="product-list" id="listaKits"></ul>
+      <div class="empty" id="vazioKits" hidden></div>
+    </section>
+
+    <!-- ---------- GALERIA ("Se inspire nessas ideias") ---------- -->
+    <section class="view" id="viewGaleria" hidden>
+      <div class="view-head">
+        <div>
+          <h2>Galeria de ideias</h2>
+          <p class="muted">Trabalhos já feitos, separados por tipo. Aparecem na página “Se inspire nessas ideias” do site.</p>
+        </div>
+      </div>
+
+      <div class="gal-types-bar">
+        <div class="chips gal-types" id="galTipos" role="group" aria-label="Tipos da galeria"></div>
+        <form class="gal-add-type" id="formGalTipo">
+          <input type="text" name="nome" placeholder="Novo tipo (ex.: Caderno A4)" required aria-label="Nome do novo tipo">
+          <button class="btn btn-ghost" type="submit">Criar tipo</button>
+        </form>
+      </div>
+
+      <div class="panel gal-panel" id="galPainel" hidden>
+        <div class="gal-panel-head">
+          <div class="gal-type-edit">
+            <label class="field">
+              <span>Nome do tipo</span>
+              <input type="text" id="galTipoNome" aria-label="Nome do tipo">
+            </label>
+            <label class="field gal-type-price">
+              <span>A partir de (R$)</span>
+              <input type="text" id="galTipoPreco" inputmode="decimal" placeholder="opcional" aria-label="Preço a partir de, deste tipo">
+            </label>
+            <div class="gal-type-actions">
+              <button type="button" class="toggle t-ativo" id="galTipoAtivo" aria-pressed="true" title="Mostrar/esconder este tipo no site"></button>
+              <button type="button" class="icon-btn danger" id="galTipoExcluir" aria-label="Excluir este tipo">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/></svg>
+              </button>
+            </div>
+          </div>
+          <label class="btn btn-primary gal-upload">
+            <input type="file" id="galFotosInput" accept="image/*" multiple hidden>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+            Adicionar fotos
+          </label>
+        </div>
+        <p class="hint" id="galDica">Pode escolher várias fotos de uma vez. Arraste pela alça para mudar a ordem. Legenda e valor salvam ao sair do campo; foto sem valor mostra o “a partir de” do tipo.</p>
+        <p class="gal-progress" id="galProgresso" hidden></p>
+        <ul class="gal-grid" id="galFotos"></ul>
+        <div class="empty" id="galVazio" hidden>
+          <p>Nenhuma foto neste tipo ainda.</p>
+        </div>
+      </div>
+
+      <div class="empty" id="galSemTipos" hidden>
+        <p>Crie o primeiro tipo acima (ex.: Caderno A5) para começar a adicionar fotos.</p>
+      </div>
+    </section>
+
+    <!-- ---------- IMPORTAR ---------- -->
+    <section class="view" id="viewImportar" hidden>
+      <div class="view-head">
+        <div>
+          <h2>Importar da planilha antiga</h2>
+          <p class="muted">Use uma vez para trazer os produtos do Google Sheets. Produtos com o mesmo código são atualizados.</p>
+        </div>
+      </div>
+
+      <div class="panel">
+        <label class="field">
+          <span>Link CSV publicado da planilha</span>
+          <input type="url" id="csvUrl">
+        </label>
+        <div class="row-actions">
+          <button class="btn btn-ghost" id="btnPrevia" type="button">Pré-visualizar</button>
+          <button class="btn btn-primary" id="btnImportar" type="button" disabled>Importar</button>
+        </div>
+        <p class="form-error" id="importErro" role="alert"></p>
+        <div class="import-preview" id="importPrevia"></div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ===================== EDITAR PRODUTO ===================== -->
+<dialog class="sheet" id="dlgProduto" aria-labelledby="dlgProdutoTitulo">
+  <form method="dialog" class="sheet-form" id="formProduto" novalidate>
+    <header class="sheet-head">
+      <h3 id="dlgProdutoTitulo">Novo produto</h3>
+      <button class="icon-btn" value="cancel" formnovalidate aria-label="Fechar">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </header>
+
+    <div class="sheet-body">
+      <div class="photo-field">
+        <div class="photo-box" id="fotoBox">
+          <img id="fotoPreview" alt="" hidden>
+          <span class="photo-empty" id="fotoVazia">Sem foto</span>
+        </div>
+        <div class="photo-actions">
+          <label class="btn btn-ghost">
+            <input type="file" id="fotoInput" accept="image/*" hidden>
+            Escolher foto
+          </label>
+          <button class="btn btn-text danger" id="btnRemoverFoto" type="button" hidden>Remover foto</button>
+          <p class="muted small">A foto é reduzida automaticamente antes de enviar.</p>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <label class="field">
+          <span>Categoria</span>
+          <select name="categoria" id="campoCategoria"></select>
+        </label>
+        <label class="field">
+          <span>Código</span>
+          <input type="text" name="id" id="campoCodigo" autocapitalize="characters" required>
+          <small class="muted" id="codigoAjuda">Sugestão automática pela categoria.</small>
+        </label>
+      </div>
+
+      <label class="field">
+        <span>Nome</span>
+        <input type="text" name="nome" required>
+      </label>
+
+      <label class="field">
+        <span>Descrição</span>
+        <textarea name="descricao" rows="3"></textarea>
+      </label>
+
+      <fieldset class="field ideas-field">
+        <legend>Ideias de presente</legend>
+        <p class="muted small">Marque onde este produto deve aparecer na gaveta “Ideias” do site. A faixa de preço é automática.</p>
+        <div id="campoIdeias"><!-- gerado via JS --></div>
+      </fieldset>
+
+      <div class="grid-2">
+        <label class="field">
+          <span>Preço (R$)</span>
+          <input type="text" name="preco" inputmode="decimal" placeholder="0,00" required>
+        </label>
+        <div class="field">
+          <span>Exibição</span>
+          <label class="check"><input type="checkbox" name="ativo"> Aparece no site</label>
+          <label class="check"><input type="checkbox" name="favorito"> Nos queridinhos</label>
+        </div>
+      </div>
+
+      <p class="form-error" id="produtoErro" role="alert"></p>
+    </div>
+
+    <footer class="sheet-foot">
+      <button class="btn btn-text danger" id="btnExcluirProduto" type="button" hidden>Excluir produto</button>
+      <span class="spacer"></span>
+      <button class="btn btn-ghost" value="cancel" formnovalidate>Cancelar</button>
+      <button class="btn btn-primary" id="btnSalvarProduto" type="submit" value="default">Salvar produto</button>
+    </footer>
+  </form>
 </dialog>
 
-<!-- ===================== HERO ===================== -->
-<section class="hero" id="hero">
-  <div class="hero-inner hero-grid">
-    <div class="hero-copy">
-      <p class="script-note">
-        <svg class="heart-mark" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20S3 14.5 3 8.6A4.6 4.6 0 0 1 12 6a4.6 4.6 0 0 1 9 2.6C21 14.5 12 20 12 20Z"/></svg>
-        Feito à mão, pensado para você
-      </p>
-      <h1>Transforme momentos em presentes especiais.</h1>
-      <a href="#" class="btn btn-primary wa-cta hero-cta" data-wa-msg="Olá! Vim pelo site e quero fazer um pedido personalizado. Pode me ajudar?">
-        <svg viewBox="0 0 32 32" width="18" height="18" fill="currentColor" aria-hidden="true"><path d="M16.02 3C9.4 3 4 8.36 4 14.96c0 2.2.6 4.27 1.66 6.05L4 29l8.2-2.15a12.9 12.9 0 0 0 3.82.58h.01c6.62 0 12.02-5.36 12.02-11.96C28.05 8.36 22.65 3 16.02 3Zm0 21.86h-.01a10.6 10.6 0 0 1-5.4-1.48l-.39-.23-3.87 1.01 1.03-3.76-.25-.39a9.83 9.83 0 0 1-1.53-5.05c0-5.46 4.46-9.9 9.94-9.9 2.66 0 5.15 1.03 7.03 2.9a9.83 9.83 0 0 1 2.9 6.99c0 5.46-4.46 9.91-9.45 9.91Z"/></svg>
-        Falar no WhatsApp
-        <svg class="hero-cta-arrow" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </a>
-    </div>
+<!-- ===================== EDITAR OFERTA ===================== -->
+<dialog class="sheet" id="dlgOferta" aria-labelledby="dlgOfertaTitulo">
+  <form method="dialog" class="sheet-form" id="formOferta" novalidate>
+    <header class="sheet-head">
+      <h3 id="dlgOfertaTitulo">Nova oferta</h3>
+      <button class="icon-btn" value="cancel" formnovalidate aria-label="Fechar">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </header>
 
-    <!-- Destaques do dia: vêm da Gerência Leiticia → aba Ofertas -->
-    <aside class="hero-offers" id="heroOffers" aria-labelledby="offersTitle">
-      <div class="offers-head">
-        <h2 class="offers-heading" id="offersTitle">
-          <span class="offers-title"><svg class="offers-spark" viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M34 8 26 15M36 22H25M33 34l-8-6"/></svg><span>Destaques</span><svg class="offers-spark" viewBox="0 0 40 40" width="40" height="40" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 8l8 7M4 22h11M7 34l8-6"/></svg></span>
-          <span class="offers-kicker">do dia</span>
-        </h2>
+    <div class="sheet-body">
+      <label class="field">
+        <span>Nome da oferta</span>
+        <input type="text" name="nome" placeholder="Ex.: Dia dos Pais" maxlength="40" required>
+      </label>
+
+      <label class="field">
+        <span>Detalhe (opcional)</span>
+        <input type="text" name="detalhe" placeholder="Ex.: Kits a partir de R$ 49 · até 15% off" maxlength="50">
+        <small class="muted">Aparece em letra pequena embaixo do nome.</small>
+      </label>
+
+      <fieldset class="field ideas-field">
+        <legend>Ícone</legend>
+        <div class="icon-pick" id="ofertaIcones"><!-- gerado via JS --></div>
+      </fieldset>
+
+      <label class="field">
+        <span>Ao clicar, mostrar os presentes de</span>
+        <select name="ideia" id="ofertaIdeia"></select>
+        <small class="muted">São as mesmas ideias da gaveta “Ideias” do site: aparecem os produtos e os kits marcados nela. Sem ideia, o card abre o WhatsApp.</small>
+      </label>
+
+      <div class="field">
+        <span>Exibição</span>
+        <label class="check"><input type="checkbox" name="ativo"> Aparece no site</label>
       </div>
-      <div class="offers-grid" id="offersGrid">
-        <!-- gerado via JS -->
+
+      <div class="offer-preview-wrap">
+        <p class="muted small">Prévia</p>
+        <div class="offer-preview" id="ofertaPrevia"></div>
       </div>
-    </aside>
-  </div>
-</section>
 
-<!-- ===================== PRODUTOS ===================== -->
-<section class="products" id="produtos">
-  <div class="section-inner">
-    <div class="products-heading">
-      <h2>Nossos produtos</h2>
-      <a class="inspire-link" href="galeria.html">
-        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-8 9"/></svg>
-        Se inspire nessas ideias
-        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
-      </a>
+      <p class="form-error" id="ofertaErro" role="alert"></p>
     </div>
 
-    <div class="idea-banner" id="ideaBanner" hidden></div>
+    <footer class="sheet-foot">
+      <button class="btn btn-text danger" id="btnExcluirOferta" type="button" hidden>Excluir oferta</button>
+      <span class="spacer"></span>
+      <button class="btn btn-ghost" value="cancel" formnovalidate>Cancelar</button>
+      <button class="btn btn-primary" id="btnSalvarOferta" type="submit" value="default">Salvar oferta</button>
+    </footer>
+  </form>
+</dialog>
 
-    <div class="idea-views" id="ideaViews" role="group" aria-label="Ver kits ou produtos desta ideia" hidden></div>
+<!-- ===================== EDITAR KIT ===================== -->
+<dialog class="sheet" id="dlgKit" aria-labelledby="dlgKitTitulo">
+  <form method="dialog" class="sheet-form" id="formKit" novalidate>
+    <header class="sheet-head">
+      <h3 id="dlgKitTitulo">Novo kit</h3>
+      <button class="icon-btn" value="cancel" formnovalidate aria-label="Fechar">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+      </button>
+    </header>
 
-    <p class="filter-label" id="filterLabel">Navegue por categorias</p>
-    <div class="filter-row" id="filterRow">
-      <!-- gerado via JS -->
+    <div class="sheet-body">
+      <div class="photo-field">
+        <div class="photo-box">
+          <img id="kitFotoPreview" alt="" hidden>
+          <span class="photo-empty" id="kitFotoVazia">Sem foto</span>
+        </div>
+        <div class="photo-actions">
+          <label class="btn btn-ghost">
+            <input type="file" id="kitFotoInput" accept="image/*" hidden>
+            Escolher foto do kit
+          </label>
+          <button class="btn btn-text danger" id="btnRemoverKitFoto" type="button" hidden>Remover foto</button>
+          <p class="muted small">Opcional. Sem foto, o site mostra as fotos dos produtos do kit.</p>
+        </div>
+      </div>
+
+      <label class="field">
+        <span>Nome do kit</span>
+        <input type="text" name="nome" placeholder="Ex.: Kit Mãe Coruja" required>
+      </label>
+
+      <label class="field">
+        <span>Descrição</span>
+        <textarea name="descricao" rows="2" placeholder="Ex.: Tudo personalizado com o nome dela, em caixa presente."></textarea>
+      </label>
+
+      <fieldset class="field ideas-field">
+        <legend>Produtos do kit</legend>
+        <input type="search" id="kitBuscaProduto" placeholder="Buscar produto por nome ou código" aria-label="Buscar produto para o kit">
+        <ul class="kit-pick" id="kitProdutos"><!-- gerado via JS --></ul>
+        <p class="kit-sum" id="kitSoma"></p>
+      </fieldset>
+
+      <div class="grid-2">
+        <label class="field">
+          <span>Preço do kit (R$)</span>
+          <input type="text" name="preco" inputmode="decimal" placeholder="0,00" required>
+        </label>
+        <div class="field">
+          <span>Exibição</span>
+          <label class="check"><input type="checkbox" name="ativo"> Aparece no site</label>
+        </div>
+      </div>
+
+      <fieldset class="field ideas-field">
+        <legend>Em quais ideias o kit aparece</legend>
+        <p class="muted small">As faixas de preço (até R$ 30, de R$ 30 a 70, acima de 70) são automáticas pelo preço do kit.</p>
+        <div id="kitIdeias"><!-- gerado via JS --></div>
+      </fieldset>
+
+      <p class="form-error" id="kitErro" role="alert"></p>
     </div>
 
-    <div class="product-grid" id="productGrid">
-      <!-- gerado via JS -->
+    <footer class="sheet-foot">
+      <button class="btn btn-text danger" id="btnExcluirKit" type="button" hidden>Excluir kit</button>
+      <span class="spacer"></span>
+      <button class="btn btn-ghost" value="cancel" formnovalidate>Cancelar</button>
+      <button class="btn btn-primary" id="btnSalvarKit" type="submit" value="default">Salvar kit</button>
+    </footer>
+  </form>
+</dialog>
+
+<!-- ===================== CONFIRMAÇÃO ===================== -->
+<dialog class="confirm" id="dlgConfirma">
+  <form method="dialog">
+    <p id="confirmaTexto"></p>
+    <div class="row-actions end">
+      <button class="btn btn-ghost" value="nao">Cancelar</button>
+      <button class="btn btn-danger" value="sim" id="confirmaBotao">Excluir</button>
     </div>
-  </div>
-</section>
+  </form>
+</dialog>
 
-<!-- ===================== QUERIDINHOS ===================== -->
-<section class="favorites" id="queridinhos">
-  <div class="section-inner">
-    <h2>Nossos queridinhos</h2>
-    <p class="section-lede">Os preferidos de quem já comprou com a gente.</p>
-    <div class="favorites-grid" id="favoritesGrid">
-      <!-- gerado via JS -->
-    </div>
-  </div>
-</section>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-<!-- ===================== PERSONALIZE ===================== -->
-<section class="customize" id="personalize">
-  <div class="customize-blob" aria-hidden="true"></div>
-  <div class="section-inner customize-inner">
-    <div class="customize-copy">
-      <h2>Personalize do seu jeito</h2>
-      <p>Escolha o produto, conte pra gente sua ideia e receba uma peça única — pensada de verdade para quem vai ganhar.</p>
-    </div>
-
-    <ol class="steps">
-      <li class="step">
-        <span class="step-number">1</span>
-        <h3>Escolha o produto</h3>
-        <p>Navegue pelo catálogo e encontre a peça perfeita para o seu momento.</p>
-      </li>
-      <li class="step">
-        <span class="step-number">2</span>
-        <h3>Conte sua ideia</h3>
-        <p>Nome, cor, frase, tema — nos envie os detalhes pelo WhatsApp.</p>
-      </li>
-      <li class="step">
-        <span class="step-number">3</span>
-        <h3>Aprovamos com você</h3>
-        <p>Enviamos uma prévia antes de colocar a mão na massa.</p>
-      </li>
-    </ol>
-  </div>
-</section>
-
-<!-- ===================== CTA FINAL ===================== -->
-<section class="final-cta" id="contato">
-  <div class="section-inner final-cta-inner">
-    <p class="script-note">vamos criar seu mimo?</p>
-    <h2>Seu presente personalizado está a uma mensagem de distância</h2>
-    <a href="#" class="btn btn-primary btn-large wa-cta" data-wa-msg="Olá! Quero fazer um pedido personalizado na Lets Mimos.">
-      <svg viewBox="0 0 32 32" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M16.02 3C9.4 3 4 8.36 4 14.96c0 2.2.6 4.27 1.66 6.05L4 29l8.2-2.15a12.9 12.9 0 0 0 3.82.58h.01c6.62 0 12.02-5.36 12.02-11.96C28.05 8.36 22.65 3 16.02 3Zm0 21.86h-.01a10.6 10.6 0 0 1-5.4-1.48l-.39-.23-3.87 1.01 1.03-3.76-.25-.39a9.83 9.83 0 0 1-1.53-5.05c0-5.46 4.46-9.9 9.94-9.9 2.66 0 5.15 1.03 7.03 2.9a9.83 9.83 0 0 1 2.9 6.99c0 5.46-4.46 9.91-9.45 9.91Z"/></svg>
-      Falar no WhatsApp
-    </a>
-  </div>
-</section>
-
-<!-- ===================== FOOTER ===================== -->
-<footer class="site-footer">
-  <div class="section-inner footer-inner">
-    <div class="footer-brand">
-      <img class="footer-logo" src="imagens/logo-claro.png?v=2" alt="Lets Mimos" width="640" height="234">
-      <span class="brand-tagline">Personalizados com carinho</span>
-    </div>
-
-    <div class="footer-col">
-      <h4>Navegue</h4>
-      <a href="#topo">Início</a>
-      <a href="#produtos">Produtos</a>
-      <a href="#sobre">Sobre nós</a>
-      <a href="#contato">Contato</a>
-    </div>
-
-    <div class="footer-col">
-      <h4>Fale com a gente</h4>
-      <a href="#" id="footerWaLink" target="_blank" rel="noopener">WhatsApp</a>
-      <a href="https://www.instagram.com/lets_mimos/" target="_blank" rel="noopener">@lets_mimos</a>
-    </div>
-
-    <div class="footer-col">
-      <h4>Lets Mimos</h4>
-      <p>Presentes personalizados feitos com carinho.</p>
-      <p>Manaus — AM</p>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <p>© <span id="year"></span> Lets Mimos. Todos os direitos reservados.</p>
-  </div>
-</footer>
-
-<script src="js/script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="js/config.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
